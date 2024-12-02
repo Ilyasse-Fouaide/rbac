@@ -20,5 +20,9 @@ module.exports = (err, req, res, next) => {
     return res.status(StatusCodes.BAD_REQUEST).json({ message: `${Object.keys(err.keyValue)} is already used` })
   }
 
-  res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(err)
+  res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ 
+    error: true, 
+    message: err.message, 
+    status: 500 
+  });
 };

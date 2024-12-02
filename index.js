@@ -4,12 +4,15 @@ const dbconnect = require('./utils/dbconnect')
 const notFound = require('./middlewares/notFound');
 const erroHander = require('./middlewares/errorHandler');
 const chalk = require('chalk');
+const cookieParser = require('cookie-parser');
 
 const app = express();
 
-app.use('/api', (req, res, next) => {
-  res.send('hello rbac here');
-});
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+
+app.use('/api/v1/auth', require('./routes/auth.routes'));
 
 app.use(notFound);
 app.use(erroHander);
