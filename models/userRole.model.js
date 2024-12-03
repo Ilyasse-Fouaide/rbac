@@ -9,7 +9,7 @@ const userRoleSchema = new Schema({
   role: { 
     type: Schema.Types.ObjectId, 
     ref: 'roles',
-    required: true 
+    required: true
   },
 });
 

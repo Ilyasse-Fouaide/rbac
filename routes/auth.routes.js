@@ -15,4 +15,7 @@ router.route('/logout')
 router.route('/profile')
   .get(authentication, auth.profile);
 
+router.route('/test')
+  .get(auth.test)
+
 module.exports = router

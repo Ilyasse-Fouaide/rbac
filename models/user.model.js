@@ -13,7 +13,16 @@ const userSchema = new Schema({
     type: String,
     required: [true, 'password required']
   },
-}, { timestamps: true });
+}, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } });
+
+userSchema.virtual('roles', {
+  ref: 'user_roles',
+  localField: '_id',
+  foreignField: 'user',
+  // By default, a populated virtual is an array.
+  // the populated virtual will be a single doc or `null`.
+  // justOne: true
+});
 
 userSchema.pre('save', function () {
   const user = this;

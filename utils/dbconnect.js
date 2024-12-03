@@ -11,10 +11,12 @@ const initalizeRoleService = async () => {
 }
 
 const dbconnect = async (URI) => {
+  // mongoose.set('toJSON', { virtuals: true });
+  // mongoose.set('toObject', { virtuals: true });
   await mongoose.connect(URI);
   console.log(`APP CONNECTED WITH DB > %c${chalk.bgGreen.bold(URI)}`, 'color: green;');
   // initalise system variables
-  // initalizeRoleService()
+  // initalizeRoleService();
 };
 
 module.exports = dbconnect;
