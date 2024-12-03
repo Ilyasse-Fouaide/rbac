@@ -2,4 +2,4 @@
 
 - [x] assign user to role when register.
 - [x] assign role to permission.
-- [] create middleware requirePermissions.
+- [ ] create middleware requirePermissions.
