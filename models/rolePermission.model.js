@@ -3,12 +3,12 @@ const { Schema, model } = require('mongoose');
 const rolePermissionSchema = new Schema({
   role: { 
     type: Schema.Types.ObjectId, 
-    ref: 'Role', 
+    ref: 'roles', 
     required: true 
   },
   permission: { 
     type: Schema.Types.ObjectId, 
-    ref: 'Permission', 
+    ref: 'permissions', 
     required: true 
   }
 });

@@ -6,6 +6,8 @@ const initalizeRoleService = async () => {
   await RoleService.initializeSystemRoles();
   console.log('----------------------------')
   await RoleService.initializeSystemPermissions();
+  console.log('----------------------------');
+  await RoleService.assignPermissionToRole();
 }
 
 const dbconnect = async (URI) => {

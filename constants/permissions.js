@@ -4,6 +4,7 @@ const SYSTEM_PERMISSIONS = {
   VIEW_USERS: 'view_users',
   
   // Project management
+  MANAGE_PROJECTS: 'manage_projects',
   CREATE_PROJECT: 'create_project',
   DELETE_PROJECT: 'delete_project',
   

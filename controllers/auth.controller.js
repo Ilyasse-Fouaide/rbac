@@ -3,11 +3,25 @@ const setCookie = require('../utils/setCookie');
 const User = require('../models/user.model');
 const Error = require('../custom-error');
 const { StatusCodes } = require('http-status-codes');
+const Role = require('../models/role.model');
+const { SYSTEM_ROLES } = require('../constants/roles');
+const UserRole = require('../models/userRole.model');
 
 exports.register = catchAsyncErrors(async (req, res, next) => {
   const user = new User(req.body);
+  const userRole = new UserRole();
+
+  const defaultRole = await Role.findOne({ name: SYSTEM_ROLES.USER });
+
+  if (!defaultRole) {
+    return next(Error.badRequest('Cannot found default role'));
+  }
 
   await user.save();
+  // assign user to default role
+  userRole.user = user._id;
+  userRole.role = defaultRole._id;
+  await userRole.save();
 
   setCookie(res, user.genRefreshToken());
 
