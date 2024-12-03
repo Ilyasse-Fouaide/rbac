@@ -7,18 +7,6 @@ const Role = require('../models/role.model');
 const { SYSTEM_ROLES } = require('../constants/roles');
 const UserRole = require('../models/userRole.model');
 
-exports.test = catchAsyncErrors(async (req, res, next) => {
-  const user = await Role.findOne()
-    .populate({
-      path: 'permissions',
-      populate: {
-        path: 'permission'
-      }
-    })
-    .lean()
-  res.status(200).json({ user });
-})
-
 exports.register = catchAsyncErrors(async (req, res, next) => {
   const user = new User(req.body);
   const userRole = new UserRole();

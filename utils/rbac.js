@@ -1,4 +1,3 @@
-const Role = require("../models/role.model");
 const User = require("../models/user.model");
 
 class RBAC {
@@ -21,9 +20,10 @@ class RBAC {
     );
   };
 
-  static async checkPermission(userId, requiredPermission) {};
+  static async checkPermission(userId, requiredPermission) {
+    const permissions = await this.getUserPermissions(userId);
+    return permissions.includes(requiredPermission);
+  };
 };
-
-RBAC.getUserPermissions();
 
 module.exports = RBAC
