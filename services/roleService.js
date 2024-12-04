@@ -13,12 +13,6 @@ class RoleService {
     return await Permission.find();
   };
 
-  static async rolePermission() {
-    return await RolePermission.find({}, '-__v')
-      .populate({ path: 'permission', select: '_id name' })
-      .populate({ path: 'role', select: '_id name' });
-  }
-
   static async initializeSystemRoles() {
     const roles = [
       { name: SYSTEM_ROLES.ADMIN, description: 'Administrator with full access to the system' },
@@ -60,6 +54,7 @@ class RoleService {
 
   static async assignPermissionToRole() {
     const roles = await this.roles();
+    // get admin permissions
     const adminPermissions = (await this.permissions())
       .filter((permission) => 
         permission.name === SYSTEM_PERMISSIONS.MANAGE_USERS ||
