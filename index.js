@@ -5,8 +5,11 @@ const notFound = require('./middlewares/notFound');
 const erroHander = require('./middlewares/errorHandler');
 const chalk = require('chalk');
 const cookieParser = require('cookie-parser');
+const Logger = require('./logger')
 
 const app = express();
+
+app.use(Logger.requestLogger());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -18,6 +21,7 @@ app.use('/api/v1/auth', require('./routes/auth.routes'));
 
 app.use(notFound);
 app.use(erroHander);
+app.use(Logger.errorLogger());
 
 const start = async () => {
   try {

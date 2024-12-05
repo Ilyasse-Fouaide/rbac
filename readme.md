@@ -4,6 +4,6 @@
 - [x] assign role to permission.
 - [x] create middleware requirePermissions.
 
-- [ ] create logger using winstone.
+- [x] create logger using winstone.
 - [ ] save the logs metadata in the database [hint](https://www.youtube.com/watch?v=2UTER21MCdk)
-- [ ] compress the old log files with `npm install winston-daily-rotate-file` [hint](https://medium.com/@bjprajapati381/using-winston-for-logging-in-node-js-applications-d15302947c28)
+- [x] compress the old log files with `npm install winston-daily-rotate-file` [hint](https://medium.com/@bjprajapati381/using-winston-for-logging-in-node-js-applications-d15302947c28)

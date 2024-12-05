@@ -1,22 +1,31 @@
-const { createLogger, format, transports } = require('winston');
+const LoggerConfig = require('./loggerConfig');
 
-const customFormat = format.combine(
-  format.colorize(),
-  format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-  format.printf(({ timestamp, level, message, ...meta }) => {
-    return `${timestamp} [${level}] ${message} ${Object.keys(meta).length ? JSON.stringify(meta, null, 2) : ''}`;
-  })
-);
+class Logger {
+  static logger = LoggerConfig.createLogger();
 
-const logger = createLogger({
-  level: 'info',
-  format: customFormat,
-  transports: [
-    new transports.Console(),
-    new transports.File({ filename: 'logs/app.log' })
-  ]
-});
+  static info(message, ...meta) {
+    this.logger.info(message, ...meta)
+  }
+  
+  static error(message, ...meta) {
+    this.logger.error(message, ...meta);
+  }
 
-// logger.http('info data', { meta: 'asdas' })
+  static warn(message, ...meta) {
+    this.logger.warn(message, ...meta);
+  }
 
-module.exports = logger;
+  static debug(message, ...meta) {
+    this.logger.debug(message, ...meta);
+  }
+
+  static requestLogger() {
+    return LoggerConfig.createRequestLogger();
+  }
+
+  static errorLogger() {
+    return LoggerConfig.createRequestErrorLogger();
+  }
+}
+
+module.exports = Logger;

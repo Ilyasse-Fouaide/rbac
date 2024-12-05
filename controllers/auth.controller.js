@@ -6,6 +6,7 @@ const { StatusCodes } = require('http-status-codes');
 const Role = require('../models/role.model');
 const { SYSTEM_ROLES } = require('../constants/roles');
 const UserRole = require('../models/userRole.model');
+const Logger = require('../logger');
 
 exports.register = catchAsyncErrors(async (req, res, next) => {
   const user = new User(req.body);
@@ -64,5 +65,9 @@ module.exports.logout = (req, res) => {
 }
 
 exports.profile = catchAsyncErrors(async (req, res, next) => {
+  Logger.info('Fetching user profile', {
+    path: req.path,
+    method: req.method
+  })
   res.status(StatusCodes.OK).json(req.user);
 });
