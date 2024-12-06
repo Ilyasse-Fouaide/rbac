@@ -6,9 +6,8 @@ const { StatusCodes } = require('http-status-codes');
 const Role = require('../models/role.model');
 const { SYSTEM_ROLES } = require('../constants/roles');
 const UserRole = require('../models/userRole.model');
-const Logger = require('../logger');
 
-exports.register = catchAsyncErrors(async (req, res, next) => {
+exports.register = catchAsyncErrors('registering user', async (req, res, next) => {
   const user = new User(req.body);
   const userRole = new UserRole();
 
@@ -29,7 +28,7 @@ exports.register = catchAsyncErrors(async (req, res, next) => {
   res.status(StatusCodes.CREATED).json(req.body);
 });
 
-exports.login = catchAsyncErrors(async (req, res, next) => {
+exports.login = catchAsyncErrors('sign-in user', async (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -53,6 +52,22 @@ exports.login = catchAsyncErrors(async (req, res, next) => {
   res.status(StatusCodes.OK).json({ body: req.body, token: user.genRefreshToken() });
 });
 
+exports.google = catchAsyncErrors('sign in with google', async (req, res, next) => {
+  const payload = req.user._json;
+  const user = await User.findOne({ email: payload.email });
+
+  if (!user) {
+    const newUser = await User.create({
+      email: payload.email,
+      password: "123", // Default password
+    });
+    setCookie(res, newUser.genRefreshToken());
+    return res.status(200).json({ success: true });
+  }
+  setCookie(res, user.genRefreshToken());
+  res.status(200).json({ success: true });
+});
+
 module.exports.logout = (req, res) => {
   //clear cookie
   res
@@ -64,10 +79,6 @@ module.exports.logout = (req, res) => {
     .json({ message: "Logged out!." });
 }
 
-exports.profile = catchAsyncErrors(async (req, res, next) => {
-  Logger.info('Fetching user profile', {
-    path: req.path,
-    method: req.method
-  })
+exports.profile = catchAsyncErrors('fetch user profile', async (req, res, next) => {
   res.status(StatusCodes.OK).json(req.user);
 });

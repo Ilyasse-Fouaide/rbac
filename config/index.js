@@ -7,6 +7,8 @@ module.exports = {
   "APP_URL": process.env.APP_URL,
   "APP_PORT": process.env.APP_PORT,
 
+  "LOG_LEVEL": process.env.LOG_LEVEL,
+
   "CLIENT_URL": process.env.CLIENT_URL,
   "CLIENT_PORT": process.env.CLIENT_PORT,
 
@@ -20,5 +22,7 @@ module.exports = {
   "JWT_REFRESHTOKEN_LIFETIME": process.env.JWT_REFRESHTOKEN_LIFETIME,
   "JWT_ACCESSTOKEN_LIFETIME": process.env.JWT_ACCESSTOKEN_LIFETIME,
 
-  "LOG_LEVEL": process.env.LOG_LEVEL,
+  "GOOGLE_CLIENT_ID": process.env.GOOGLE_CLIENT_ID,
+  "GOOGLE_CLIENT_SECRET": process.env.GOOGLE_CLIENT_SECRET,
+  "GOOGLE_CALLBACK_URL": process.env.GOOGLE_CALLBACK_URL,
 };
