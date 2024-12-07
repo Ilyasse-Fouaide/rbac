@@ -9,12 +9,27 @@ const Logger = require('./logger')
 const helmet = require('helmet');
 const passport = require('passport');
 const googlestrategy = require('./auth/google');
+const { rateLimit } = require('express-rate-limit');
+const cors = require('cors');
 
 const app = express();
 
 app.use(Logger.requestLogger());
 
+const limiter = rateLimit({
+	windowMs: 15 * 60 * 1000, // 15 minutes
+	limit: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
+	standardHeaders: 'draft-7', // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
+	legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
+});
+
+app.use(cors({
+  origin: config.CLIENT_URL,
+  credentials: true,
+}));
+
 app.use(helmet());
+app.use(limiter);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
