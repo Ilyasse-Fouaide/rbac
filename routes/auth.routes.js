@@ -10,7 +10,10 @@ router.route('/login')
   .post(auth.login);
 
 router.route('/logout')
-  .post(auth.logout);
+  .post(authentication, auth.logout);
+
+router.route('/refresh-token')
+  .post(auth.refreshToken);
 
 router.route('/profile')
   .get(authentication, auth.profile);

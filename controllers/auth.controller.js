@@ -6,6 +6,10 @@ const { StatusCodes } = require('http-status-codes');
 const Role = require('../models/role.model');
 const { SYSTEM_ROLES } = require('../constants/roles');
 const UserRole = require('../models/userRole.model');
+const { v4: uuidv4 } = require('uuid');
+const Token = require('../models/token.model');
+const { verifyJwtToken, registerJwtRefreshToken } = require('../utils/jwt.utils');
+const config = require('../config');
 
 exports.register = catchAsyncErrors('registering user', async (req, res, next) => {
   const user = new User(req.body);
@@ -22,8 +26,6 @@ exports.register = catchAsyncErrors('registering user', async (req, res, next) =
   userRole.user = user._id;
   userRole.role = defaultRole._id;
   await userRole.save();
-
-  setCookie(res, user.genRefreshToken());
 
   res.status(StatusCodes.CREATED).json(req.body);
 });
@@ -47,9 +49,9 @@ exports.login = catchAsyncErrors('sign-in user', async (req, res, next) => {
     return next(Error.badRequest('Invalid Credentials'));
   }
 
-  setCookie(res, user.genRefreshToken());
+  const { refreshToken, accessToken } = await registerJwtRefreshToken(user, req, res, next)
 
-  res.status(StatusCodes.OK).json({ body: req.body, token: user.genRefreshToken() });
+  res.status(StatusCodes.OK).json({ refreshToken, accessToken });
 });
 
 exports.google = catchAsyncErrors('sign in with google', async (req, res, next) => {
@@ -61,15 +63,40 @@ exports.google = catchAsyncErrors('sign in with google', async (req, res, next) 
       email: payload.email,
       password: "123", // Default password
     });
-    setCookie(res, newUser.genRefreshToken());
-    return res.status(200).json({ success: true });
+    const { refreshToken, accessToken } = await registerJwtRefreshToken(newUser, req, res, next);
+    return res.status(200).json({ refreshToken, accessToken});
   }
-  setCookie(res, user.genRefreshToken());
-  res.status(200).json({ success: true });
+  const { refreshToken, accessToken } = await registerJwtRefreshToken(user, req, res, next);
+  res.status(StatusCodes.OK).json({ refreshToken, accessToken});
 });
 
-module.exports.logout = (req, res) => {
-  //clear cookie
+exports.refreshToken = catchAsyncErrors('refreshing token', async (req, res, next) => {
+  const { refresh_token } = req.cookies;
+
+  if (!refresh_token) {
+    return next(Error.unAuthorized());
+  }
+
+  verifyJwtToken(refresh_token, config.JWT_REFRESHTOKEN_SECRET_KEY, async (err, decoded) => {
+    if (err) return next(Error.unAuthorized());
+
+    const user = await User.findById(decoded.userId);
+    if (!user) return next(Error.notFound('User not found'));
+
+    // generate new access token
+    const newAccessToken = user.genAccessToken();
+    res.status(StatusCodes.OK).json({ accessToken: newAccessToken })
+  });
+});
+
+exports.logout = async (req, res) => {
+  // set refresh token to null
+  await Token.findOneAndUpdate(
+    { user: req.user.userId }, 
+    { refreshToken: null },
+  );
+
+  // clear refresh_token cookie
   res
     .status(StatusCodes.OK)
     .cookie('refresh_token', '', {

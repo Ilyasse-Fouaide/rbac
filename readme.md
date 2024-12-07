@@ -16,13 +16,13 @@
   - **CORS Configuration**: Ensure proper Cross-Origin Resource Sharing (CORS) settings to control which domains can access your 
   API.
 
-- [ ] refresh_token and access_token mechanism
+- [x] refresh_token and access_token mechanism
 
 - [ ] Implement a Role Management Dashboard for admins to create, assign, and edit roles and permissions dynamically.
 
 - [ ] API Documentation using `swagger-jsdoc` or `swagger-ui-express`
 
-- [ ] . CI/CD Pipeline:
+- [ ] CI/CD Pipeline:
   - Set up a Continuous Integration / Continuous Deployment pipeline using GitHub Actions, GitLab CI, or Jenkins to automate testing and deployment processes.
   - Automate linting, testing, and deployments to your staging and production environments.
 

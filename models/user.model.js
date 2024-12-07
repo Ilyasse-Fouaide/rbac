@@ -44,8 +44,15 @@ userSchema.methods.comparePassword = async function (passwordString, hashedPassw
 userSchema.methods.genRefreshToken = function () {
   return jwt.sign({
     userId: this._id,
-    email: this.email,
-  }, config.JWT_SECRET_KEY, { expiresIn: config.JWT_REFRESHTOKEN_LIFETIME || '7d' });
+    email: this.email
+  }, config.JWT_REFRESHTOKEN_SECRET_KEY, { expiresIn: config.JWT_REFRESHTOKEN_LIFETIME || '7d' });
+};
+
+userSchema.methods.genAccessToken = function () {
+  return jwt.sign({
+    userId: this._id,
+    email: this.email
+  }, config.JWT_ACCESSTOKEN_SECRET_KEY, { expiresIn: config.JWT_ACCESSTOKEN_LIFETIME || '15min' });
 };
 
 const User = model('users', userSchema);

@@ -1,15 +1,17 @@
-const jwt = require('jsonwebtoken');
 const Error = require('../custom-error');
 const config = require('../config');
+const {verifyJwtToken} = require('../utils/jwt.utils');
 
 const authenticated = (req, res, next) => {
-  const { refresh_token } = req.cookies;
+  const tokenAuthHeader = req.headers.authorization;
 
-  if (!refresh_token) {
+  if (!tokenAuthHeader) {
     return next(Error.unAuthorized());
   }
 
-  jwt.verify(refresh_token, config.JWT_SECRET_KEY, (err, decoded) => {
+  const token = tokenAuthHeader.split(' ')[1];
+
+  verifyJwtToken(token, config.JWT_ACCESSTOKEN_SECRET_KEY, (err, decoded) => {
     if (err) return next(Error.unAuthorized());
 
     const user = {
