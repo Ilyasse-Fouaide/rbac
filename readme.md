@@ -13,7 +13,10 @@
   - Protect your API from abuse and malicious users by limiting the number of requests a user can make in a given time window (e.g., 100 requests per minute).
 
 - [x] Improve API Security
-  - **CORS Configuration**: Ensure proper Cross-Origin Resource Sharing (CORS) settings to control which domains can access your API.
+  - **CORS Configuration**: Ensure proper Cross-Origin Resource Sharing (CORS) settings to control which domains can access your 
+  API.
+
+- [ ] refresh_token and access_token mechanism
 
 - [ ] Implement a Role Management Dashboard for admins to create, assign, and edit roles and permissions dynamically.
 
