@@ -1,12 +1,13 @@
 const config = require("../config");
 
-const setCookie = (res, token) => {
+const setCookie = (res, name, token, expires) => {
   return res
-    .cookie('refresh_token', token,
+    .cookie(name, token,
       {
         httpOnly: true,
         secure: config.APP_ENV === 'production',
-        sameSite: 'Strict'
+        // signed: true,
+        expires: new Date(Date.now() + expires)
       });
 };
 

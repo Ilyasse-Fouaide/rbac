@@ -2,18 +2,50 @@ const jwt = require('jsonwebtoken');
 const Token = require('../models/token.model');
 const setCookie = require('./setCookie');
 const Error = require('../custom-error');
+const config = require('../config');
+const crypto = require('crypto');
+const { StatusCodes } = require('http-status-codes');
 
-function verifyJwtToken(token, secretKey, cb) {
-  jwt.verify(token, secretKey, (err, decoded) => {
-    cb(err, decoded);
-  });
+function createTokenUser(user) {
+  return { userId: user._id, email: user.email };
+}
+
+function createJWT(payload, secretKey, expiresIn) {
+  return jwt.sign(payload, secretKey, { expiresIn });
+}
+
+function verifyJwtToken(token, secretKey) {
+  return jwt.verify(token, secretKey);
+}
+
+function attachCookiesToResponse(res, user, refreshToken) {
+  const accessTokenJwt = createJWT({ user }, config.JWT_ACCESSTOKEN_SECRET_KEY, config.JWT_ACCESSTOKEN_LIFETIME);
+  const refreshTokenJwt = createJWT({ user, refreshToken }, config.JWT_REFRESHTOKEN_SECRET_KEY, config.JWT_REFRESHTOKEN_LIFETIME);
+
+  const accessTokenExpires = 1000 * 60 * 15;  // 15min
+  const refreshTokenExpires = 1000 * 60 * 60 * 24 * 7;  // 7day
+
+  setCookie(res, 'access_token', accessTokenJwt, accessTokenExpires);
+  setCookie(res, 'refresh_token', refreshTokenJwt, refreshTokenExpires);
 }
 
 async function registerJwtRefreshToken(user, req, res, next) {
-  const refreshToken = user.genRefreshToken();
-  const accessToken = user.genAccessToken();
+  const userPayload = createTokenUser(user);
 
-  // save the refresh token in the database
+  // check for existing token
+  const existingToken = await Token.findOne({ user: user._id });
+
+  if (existingToken) {
+    if (!existingToken.isValid) {
+      return next(Error.badRequest('Invalid Credentials'));
+    }
+    const existingRefreshToken = existingToken.refreshToken;
+    attachCookiesToResponse(res, userPayload, existingRefreshToken);
+    return res.status(StatusCodes.OK).json({});
+  }
+
+  const refreshToken = crypto.randomBytes(48).toString('hex');
+
   const userToken = {
     refreshToken,
     ip: req.ip,
@@ -21,18 +53,14 @@ async function registerJwtRefreshToken(user, req, res, next) {
     user: user._id
   };
 
-  const token = await Token.findOneAndUpdate(
-    { user: user._id },
-    userToken,
-    { upsert: true, new: true }
-  );
+  await Token.create(userToken);
 
-  if (!token.isValid) {
-    return next(Error.unAuthorized());
-  }
-
-  setCookie(res, refreshToken);
-  return { refreshToken, accessToken };
+  attachCookiesToResponse(res, userPayload, refreshToken );
 }
 
-module.exports = { verifyJwtToken, registerJwtRefreshToken };
+module.exports = { 
+  createTokenUser,
+  verifyJwtToken, 
+  attachCookiesToResponse,
+  registerJwtRefreshToken
+};

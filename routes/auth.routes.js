@@ -12,9 +12,6 @@ router.route('/login')
 router.route('/logout')
   .post(authentication, auth.logout);
 
-router.route('/refresh-token')
-  .post(auth.refreshToken);
-
 router.route('/profile')
   .get(authentication, auth.profile);
 
