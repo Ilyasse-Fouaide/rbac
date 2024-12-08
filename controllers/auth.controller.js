@@ -6,7 +6,7 @@ const Role = require('../models/role.model');
 const { SYSTEM_ROLES } = require('../constants/roles');
 const UserRole = require('../models/userRole.model');
 const Token = require('../models/token.model');
-const { registerJwtRefreshToken } = require('../utils/jwt.utils');
+const { registerJwtTokens } = require('../utils/jwt.utils');
 
 exports.register = catchAsyncErrors('registering user', async (req, res, next) => {
   const user = new User(req.body);
@@ -46,7 +46,7 @@ exports.login = catchAsyncErrors('sign-in user', async (req, res, next) => {
     return next(Error.badRequest('Invalid Credentials'));
   }
 
-  await registerJwtRefreshToken(user, req, res, next);
+  await registerJwtTokens(user, req, res, next);
 
   res.status(StatusCodes.OK).json({});
 });
@@ -60,10 +60,10 @@ exports.google = catchAsyncErrors('sign in with google', async (req, res, next) 
       email: payload.email,
       password: "123", // Default password
     });
-    await registerJwtRefreshToken(newUser, req, res, next);
+    await registerJwtTokens(newUser, req, res, next);
     return res.status(200).json({ message: 'logged in' });
   }
-  await registerJwtRefreshToken(user, req, res, next);
+  await registerJwtTokens(user, req, res, next);
   res.status(StatusCodes.OK).json({ message: 'logged in' });
 });
 

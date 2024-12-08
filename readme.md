@@ -20,6 +20,8 @@
 
 - [ ] Implement a Role Management Dashboard for admins to create, assign, and edit roles and permissions dynamically.
 
+- [ ] Implement Logger dashboard
+
 - [ ] API Documentation using `swagger-jsdoc` or `swagger-ui-express`
 
 - [ ] CI/CD Pipeline:

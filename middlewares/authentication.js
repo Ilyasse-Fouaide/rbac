@@ -1,6 +1,5 @@
 const Error = require('../custom-error');
 const config = require('../config');
-const jwt = require('jsonwebtoken')
 const { verifyJwtToken, attachCookiesToResponse } = require('../utils/jwt.utils');
 const Token = require('../models/token.model');
 

@@ -29,7 +29,7 @@ function attachCookiesToResponse(res, user, refreshToken) {
   setCookie(res, 'refresh_token', refreshTokenJwt, refreshTokenExpires);
 }
 
-async function registerJwtRefreshToken(user, req, res, next) {
+async function registerJwtTokens(user, req, res, next) {
   const userPayload = createTokenUser(user);
 
   // check for existing token
@@ -62,5 +62,5 @@ module.exports = {
   createTokenUser,
   verifyJwtToken, 
   attachCookiesToResponse,
-  registerJwtRefreshToken
+  registerJwtTokens
 };
