@@ -18,6 +18,8 @@
 
 - [x] refresh_token and access_token mechanism
 
+- [ ] automate eslinter 
+
 - [ ] Implement a Role Management Dashboard for admins to create, assign, and edit roles and permissions dynamically.
 
 - [ ] Implement Logger dashboard
