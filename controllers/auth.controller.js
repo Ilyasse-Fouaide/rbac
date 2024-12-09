@@ -51,6 +51,22 @@ exports.login = catchAsyncErrors('sign-in user', async (req, res, next) => {
   res.status(StatusCodes.OK).json({});
 });
 
+exports.google = catchAsyncErrors('sign in with google', async (req, res, next) => {
+  const payload = req.user._json;
+  const user = await User.findOne({ email: payload.email });
+
+  if (!user) {
+    const newUser = await User.create({
+      email: payload.email,
+      password: "123", // Default password
+    });
+    await registerJwtTokens(newUser, req, res, next);
+    return res.status(200).json({ message: 'logged in' });
+  }
+  await registerJwtTokens(user, req, res, next);
+  res.status(StatusCodes.OK).json({ message: 'logged in' });
+});
+
 exports.logout = async (req, res) => {
   // delete the token
   await Token.findOneAndDelete({ user: req.user.userId });
