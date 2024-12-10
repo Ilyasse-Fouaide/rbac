@@ -6,7 +6,7 @@ class Logger {
   static info(message, ...meta) {
     this.logger.info(message, ...meta);
   }
-  
+
   static error(message, ...meta) {
     this.logger.error(message, ...meta);
   }

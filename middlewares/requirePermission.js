@@ -1,4 +1,4 @@
-const RBAC = require("../utils/rbac");
+const RBAC = require('../utils/rbac');
 const Error = require('../custom-error');
 
 const requirePermission = (permission) => {

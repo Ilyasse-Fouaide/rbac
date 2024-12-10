@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const mongoose = require('mongoose');
 const chalk = require('chalk');
 const RoleService = require('../services/roleService');
@@ -14,7 +15,10 @@ const dbconnect = async (URI) => {
   // mongoose.set('toJSON', { virtuals: true });
   // mongoose.set('toObject', { virtuals: true });
   await mongoose.connect(URI);
-  console.log(`APP CONNECTED WITH DB > %c${chalk.bgGreen.bold(URI)}`, 'color: green;');
+  console.log(
+    `APP CONNECTED WITH DB > %c${chalk.bgGreen.bold(URI)}`,
+    'color: green;',
+  );
   // initalise system variables
   // initalizeRoleService();
 };

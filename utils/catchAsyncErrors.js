@@ -1,11 +1,11 @@
-const Logger = require("../logger");
+const Logger = require('../logger');
 
 const catchAsyncErrors = (message, middleware) => {
   return async (req, res, next) => {
     try {
       Logger.info(message || 'Request processed', {
         path: req.path,
-        method: req.method
+        method: req.method,
       });
 
       await middleware(req, res, next);

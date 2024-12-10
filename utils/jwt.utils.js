@@ -19,11 +19,19 @@ function verifyJwtToken(token, secretKey) {
 }
 
 function attachCookiesToResponse(res, user, refreshToken) {
-  const accessTokenJwt = createJWT({ user }, config.JWT_ACCESSTOKEN_SECRET_KEY, config.JWT_ACCESSTOKEN_LIFETIME);
-  const refreshTokenJwt = createJWT({ user, refreshToken }, config.JWT_REFRESHTOKEN_SECRET_KEY, config.JWT_REFRESHTOKEN_LIFETIME);
+  const accessTokenJwt = createJWT(
+    { user },
+    config.JWT_ACCESSTOKEN_SECRET_KEY,
+    config.JWT_ACCESSTOKEN_LIFETIME,
+  );
+  const refreshTokenJwt = createJWT(
+    { user, refreshToken },
+    config.JWT_REFRESHTOKEN_SECRET_KEY,
+    config.JWT_REFRESHTOKEN_LIFETIME,
+  );
 
-  const accessTokenExpires = 1000 * 60 * 15;  // 15min
-  const refreshTokenExpires = 1000 * 60 * 60 * 24 * 7;  // 7day
+  const accessTokenExpires = 1000 * 60 * 15; // 15min
+  const refreshTokenExpires = 1000 * 60 * 60 * 24 * 7; // 7day
 
   setCookie(res, 'access_token', accessTokenJwt, accessTokenExpires);
   setCookie(res, 'refresh_token', refreshTokenJwt, refreshTokenExpires);
@@ -50,17 +58,17 @@ async function registerJwtTokens(user, req, res, next) {
     refreshToken,
     ip: req.ip,
     userAgent: req.headers['user-agent'],
-    user: user._id
+    user: user._id,
   };
 
   await Token.create(userToken);
 
-  attachCookiesToResponse(res, userPayload, refreshToken );
+  attachCookiesToResponse(res, userPayload, refreshToken);
 }
 
-module.exports = { 
+module.exports = {
   createTokenUser,
-  verifyJwtToken, 
+  verifyJwtToken,
   attachCookiesToResponse,
-  registerJwtTokens
+  registerJwtTokens,
 };

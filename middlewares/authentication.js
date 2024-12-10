@@ -1,6 +1,9 @@
 const Error = require('../custom-error');
 const config = require('../config');
-const { verifyJwtToken, attachCookiesToResponse } = require('../utils/jwt.utils');
+const {
+  verifyJwtToken,
+  attachCookiesToResponse,
+} = require('../utils/jwt.utils');
 const Token = require('../models/token.model');
 
 const authenticated = async (req, res, next) => {
@@ -9,19 +12,25 @@ const authenticated = async (req, res, next) => {
   try {
     // if there is an access_token
     if (access_token) {
-      const accessTokenPayload = verifyJwtToken(access_token, config.JWT_ACCESSTOKEN_SECRET_KEY);
+      const accessTokenPayload = verifyJwtToken(
+        access_token,
+        config.JWT_ACCESSTOKEN_SECRET_KEY,
+      );
       // create a user object that has the access token payload
       req.user = accessTokenPayload.user;
       return next();
     }
 
     // if there is no access token
-    const refreshTokenPayload = verifyJwtToken(refresh_token, config.JWT_REFRESHTOKEN_SECRET_KEY);
+    const refreshTokenPayload = verifyJwtToken(
+      refresh_token,
+      config.JWT_REFRESHTOKEN_SECRET_KEY,
+    );
 
     // finding the existing refresh_token
-    const token = await Token.findOne({ 
-      user: refreshTokenPayload.user.userId, 
-      refreshToken: refreshTokenPayload.refreshToken
+    const token = await Token.findOne({
+      user: refreshTokenPayload.user.userId,
+      refreshToken: refreshTokenPayload.refreshToken,
     });
 
     // checking unauthorized access
@@ -30,11 +39,7 @@ const authenticated = async (req, res, next) => {
     }
 
     // then attach the existing refresh token in db to cookies
-    attachCookiesToResponse(
-      res, 
-      refreshTokenPayload.user,
-      token.refreshToken
-    );
+    attachCookiesToResponse(res, refreshTokenPayload.user, token.refreshToken);
 
     req.user = refreshTokenPayload.user;
     next();

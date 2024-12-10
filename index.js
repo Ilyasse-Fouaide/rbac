@@ -24,10 +24,12 @@ const limiter = rateLimit({
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
 });
 
-app.use(cors({
-  origin: config.CLIENT_URL,
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: config.CLIENT_URL,
+    credentials: true,
+  }),
+);
 
 app.use(helmet());
 app.use(limiter);
@@ -59,7 +61,9 @@ const start = async () => {
     const URI = `${config.DB_CONNECTION}://${config.DB_HOST}:${config.DB_PORT}/${config.DB_DATABSE}`;
     const port = config.APP_PORT || 8000;
     await dbconnect(URI);
-    app.listen(port, () => console.log(`APP RUNNIGN AT ${chalk.bgBlue(`PORT > ${port}`)}`));
+    app.listen(port, () =>
+      console.log(`APP RUNNIGN AT ${chalk.bgBlue(`PORT > ${port}`)}`),
+    );
   } catch (error) {
     console.log(error);
   }
