@@ -28,7 +28,7 @@ class LoggerConfig {
       const dirExists = fs.existsSync(dir);
       if (!dirExists) {
         fs.mkdirSync(dir, { recursive: true });
-        console.log(`- ✅ Successfully created ${dir} directory`)
+        console.log(`- ✅ Successfully created ${dir} directory`);
       }
     });
   }

@@ -10,10 +10,10 @@ const catchAsyncErrors = (message, middleware) => {
 
       await middleware(req, res, next);
     } catch (error) {
-      Logger.error(`Failed to ${message}`, { error: error.message })
+      Logger.error(`Failed to ${message}`, { error: error.message });
       next(error);
     }
-  }
-}
+  };
+};
 
 module.exports = catchAsyncErrors;

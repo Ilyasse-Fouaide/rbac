@@ -1,11 +1,12 @@
+/* eslint-disable no-console */
 const express = require('express');
-const config = require('./config')
-const dbconnect = require('./utils/dbconnect')
+const config = require('./config');
+const dbconnect = require('./utils/dbconnect');
 const notFound = require('./middlewares/notFound');
 const erroHander = require('./middlewares/errorHandler');
 const chalk = require('chalk');
 const cookieParser = require('cookie-parser');
-const Logger = require('./logger')
+const Logger = require('./logger');
 const helmet = require('helmet');
 const passport = require('passport');
 const googlestrategy = require('./auth/google');
@@ -17,10 +18,10 @@ const app = express();
 app.use(Logger.requestLogger());
 
 const limiter = rateLimit({
-	windowMs: 15 * 60 * 1000, // 15 minutes
-	limit: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
-	standardHeaders: 'draft-7', // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
-	legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  limit: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
+  standardHeaders: 'draft-7', // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
 });
 
 app.use(cors({
@@ -62,6 +63,6 @@ const start = async () => {
   } catch (error) {
     console.log(error);
   }
-}
+};
 
 start();

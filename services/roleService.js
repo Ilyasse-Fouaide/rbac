@@ -1,5 +1,5 @@
 const { SYSTEM_ROLES } = require("../constants/roles");
-const { SYSTEM_PERMISSIONS } = require('../constants/permissions')
+const { SYSTEM_PERMISSIONS } = require('../constants/permissions');
 const Role = require("../models/role.model");
 const Permission = require("../models/permission.model");
 const RolePermission = require("../models/rolePermission.model");
@@ -28,7 +28,7 @@ class RoleService {
         },
         { upsert: true, new: true } // update or insert
       );
-      console.log(`- ✅ Successfully created '${role.name}' role.`)
+      console.log(`- ✅ Successfully created '${role.name}' role.`);
     }
   }
 
@@ -48,7 +48,7 @@ class RoleService {
         },
         { upsert: true, new: true }  // update or insert
       );
-      console.log(`- ✅ Successfully created '${permission.name} permission.'`)
+      console.log(`- ✅ Successfully created '${permission.name} permission.'`);
     }
   }
 
@@ -70,9 +70,9 @@ class RoleService {
         { role: adminId, permission: permission._id },
         { upsert: true, new: true }
       );
-      console.log(`- ✅ Successfully assigned '${permission.name}' to '${SYSTEM_ROLES.ADMIN}'`)
+      console.log(`- ✅ Successfully assigned '${permission.name}' to '${SYSTEM_ROLES.ADMIN}'`);
     });
   }
 }
 
-module.exports = RoleService
+module.exports = RoleService;

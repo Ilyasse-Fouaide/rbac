@@ -3,13 +3,13 @@ const Role = require('../models/role.model');
 const catchAsyncErrors = require('../utils/catchAsyncErrors');
 const Error = require('../custom-error');
 
-exports.create = catchAsyncErrors(async (req, res, next) => {
+exports.create = catchAsyncErrors(async (req, res, _next) => {
   const role = new Role(req.body);
   await role.save();
 
   return res.status(StatusCodes.CREATED).json({
-      message: 'Role created successfully',
-      role: role
+    message: 'Role created successfully',
+    role: role
   });
 });
 
@@ -25,7 +25,7 @@ exports.show = catchAsyncErrors(async (req, res, next) => {
   const role = await Role.findById(id);
 
   if (!role) {
-      return next(Error.badRequest('Role not found'));
+    return next(Error.badRequest('Role not found'));
   }
 
   return res.status(StatusCodes.OK).json(role);

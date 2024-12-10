@@ -67,8 +67,8 @@ exports.logout = async (req, res) => {
       expires: new Date(Date.now())  // expires now
     })
     .json({ message: "Logged out!." });
-}
+};
 
-exports.profile = catchAsyncErrors('fetch user profile', async (req, res, next) => {
+exports.profile = catchAsyncErrors('fetch user profile', async (req, res) => {
   res.status(StatusCodes.OK).json(req.user);
 });

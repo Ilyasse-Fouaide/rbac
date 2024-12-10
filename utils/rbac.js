@@ -26,4 +26,4 @@ class RBAC {
   };
 };
 
-module.exports = RBAC
+module.exports = RBAC;

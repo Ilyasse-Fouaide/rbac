@@ -15,4 +15,4 @@ router.route('/logout')
 router.route('/profile')
   .get(authentication, auth.profile);
 
-module.exports = router
+module.exports = router;

@@ -1,7 +1,7 @@
 const { Schema, model } = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const config = require('../config')
+const config = require('../config');
 
 const userSchema = new Schema({
   email: {

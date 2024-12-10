@@ -4,7 +4,7 @@ class Logger {
   static logger = LoggerConfig.createLogger();
 
   static info(message, ...meta) {
-    this.logger.info(message, ...meta)
+    this.logger.info(message, ...meta);
   }
   
   static error(message, ...meta) {

@@ -16,7 +16,6 @@ module.exports = {
   "DB_HOST": process.env.DB_HOST,
   "DB_PORT": process.env.DB_PORT,
   "DB_DATABSE": process.env.DB_DATABSE,
-  "DB_DATABSE": process.env.DB_DATABSE,
 
   "JWT_REFRESHTOKEN_SECRET_KEY": process.env.JWT_REFRESHTOKEN_SECRET_KEY,
   "JWT_REFRESHTOKEN_LIFETIME": process.env.JWT_REFRESHTOKEN_LIFETIME,

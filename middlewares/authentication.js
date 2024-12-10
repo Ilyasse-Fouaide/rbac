@@ -11,7 +11,7 @@ const authenticated = async (req, res, next) => {
     if (access_token) {
       const accessTokenPayload = verifyJwtToken(access_token, config.JWT_ACCESSTOKEN_SECRET_KEY);
       // create a user object that has the access token payload
-      req.user = accessTokenPayload.user
+      req.user = accessTokenPayload.user;
       return next();
     }
 
@@ -41,6 +41,6 @@ const authenticated = async (req, res, next) => {
   } catch (error) {
     next(Error.unAuthorized());
   }
-}
+};
 
 module.exports = authenticated;

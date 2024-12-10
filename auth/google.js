@@ -6,9 +6,9 @@ const googlestrategy = new GoogleStrategy({
   clientSecret: config.GOOGLE_CLIENT_SECRET,
   callbackURL: config.GOOGLE_CALLBACK_URL,
 },
-  function (accessToken, refreshToken, profile, cb) {
-    return cb(null, profile);
-  }
-)
+function (accessToken, refreshToken, profile, cb) {
+  return cb(null, profile);
+}
+);
 
-module.exports = googlestrategy
+module.exports = googlestrategy;
