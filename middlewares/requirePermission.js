@@ -1,5 +1,5 @@
-const RBAC = require("../utils/rbac");
-const Error = require('../custom-error')
+const RBAC = require('../utils/rbac');
+const Error = require('../custom-error');
 
 const requirePermission = (permission) => {
   return async (req, res, next) => {
@@ -15,7 +15,7 @@ const requirePermission = (permission) => {
     } catch (error) {
       next(error.message);
     }
-  }
-}
+  };
+};
 
 module.exports = requirePermission;

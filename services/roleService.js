@@ -1,8 +1,8 @@
-const { SYSTEM_ROLES } = require("../constants/roles");
-const { SYSTEM_PERMISSIONS } = require('../constants/permissions')
-const Role = require("../models/role.model");
-const Permission = require("../models/permission.model");
-const RolePermission = require("../models/rolePermission.model");
+const { SYSTEM_ROLES } = require('../constants/roles');
+const { SYSTEM_PERMISSIONS } = require('../constants/permissions');
+const Role = require('../models/role.model');
+const Permission = require('../models/permission.model');
+const RolePermission = require('../models/rolePermission.model');
 
 class RoleService {
   static async roles() {
@@ -11,12 +11,18 @@ class RoleService {
 
   static async permissions() {
     return await Permission.find();
-  };
+  }
 
   static async initializeSystemRoles() {
     const roles = [
-      { name: SYSTEM_ROLES.ADMIN, description: 'Administrator with full access to the system' },
-      { name: SYSTEM_ROLES.USER, description: 'Regular user with limited access' },
+      {
+        name: SYSTEM_ROLES.ADMIN,
+        description: 'Administrator with full access to the system',
+      },
+      {
+        name: SYSTEM_ROLES.USER,
+        description: 'Regular user with limited access',
+      },
     ];
 
     for (const role of roles) {
@@ -24,11 +30,11 @@ class RoleService {
         { name: role.name },
         {
           name: role.name,
-          description: role.description || null
+          description: role.description || null,
         },
-        { upsert: true, new: true } // update or insert
+        { upsert: true, new: true }, // update or insert
       );
-      console.log(`- ✅ Successfully created '${role.name}' role.`)
+      console.log(`- ✅ Successfully created '${role.name}' role.`);
     }
   }
 
@@ -44,35 +50,37 @@ class RoleService {
         { name: permission.name },
         {
           name: permission.name,
-          description: permission.description || null
+          description: permission.description || null,
         },
-        { upsert: true, new: true }  // update or insert
+        { upsert: true, new: true }, // update or insert
       );
-      console.log(`- ✅ Successfully created '${permission.name} permission.'`)
+      console.log(`- ✅ Successfully created '${permission.name} permission.'`);
     }
   }
 
   static async assignPermissionToRole() {
     const roles = await this.roles();
     // get admin permissions
-    const adminPermissions = (await this.permissions())
-      .filter((permission) => 
+    const adminPermissions = (await this.permissions()).filter(
+      (permission) =>
         permission.name === SYSTEM_PERMISSIONS.MANAGE_USERS ||
         permission.name === SYSTEM_PERMISSIONS.MANAGE_ROLES ||
-        permission.name === SYSTEM_PERMISSIONS.MANAGE_PROJECTS
-      );
+        permission.name === SYSTEM_PERMISSIONS.MANAGE_PROJECTS,
+    );
 
     // assign permissions to admin
     adminPermissions.map(async (permission) => {
       const adminId = roles.find((el) => el.name === SYSTEM_ROLES.ADMIN)._id;
       await RolePermission.findOneAndUpdate(
-        { role: adminId, permission: permission._id},
         { role: adminId, permission: permission._id },
-        { upsert: true, new: true }
+        { role: adminId, permission: permission._id },
+        { upsert: true, new: true },
       );
-      console.log(`- ✅ Successfully assigned '${permission.name}' to '${SYSTEM_ROLES.ADMIN}'`)
+      console.log(
+        `- ✅ Successfully assigned '${permission.name}' to '${SYSTEM_ROLES.ADMIN}'`,
+      );
     });
   }
 }
 
-module.exports = RoleService
+module.exports = RoleService;

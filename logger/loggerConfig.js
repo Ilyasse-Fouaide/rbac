@@ -28,7 +28,8 @@ class LoggerConfig {
       const dirExists = fs.existsSync(dir);
       if (!dirExists) {
         fs.mkdirSync(dir, { recursive: true });
-        console.log(`- ✅ Successfully created ${dir} directory`)
+        // eslint-disable-next-line no-console
+        console.log(`- ✅ Successfully created ${dir} directory`);
       }
     });
   }
@@ -44,10 +45,10 @@ class LoggerConfig {
           timestamp,
           level,
           message: stack || message,
-          meta: Object.keys(meta).length ? meta : undefined
+          meta: Object.keys(meta).length ? meta : undefined,
         };
         return JSON.stringify(logEntry);
-      })
+      }),
     );
   }
 
@@ -58,49 +59,73 @@ class LoggerConfig {
     return winston.createLogger({
       level: config.LOG_LEVEL || 'info',
       format: this.createLogFormat(),
-      defaultMeta: { 
+      defaultMeta: {
         // service: process.env.SERVICE_NAME || 'default-service',
-        hostname: os.hostname()
+        hostname: os.hostname(),
       },
       transports: [
         // Console transport for development
         new winston.transports.Console({
-          format: winston.format.colorize({ all: true })
+          format: winston.format.colorize({ all: true }),
         }),
-        
+
         // File transport for error logs
         new DailyRotateFile({
-          filename: path.join(__dirname, '..', 'logs', 'error', 'error-%DATE%.log'),
+          filename: path.join(
+            __dirname,
+            '..',
+            'logs',
+            'error',
+            'error-%DATE%.log',
+          ),
           level: 'error',
           datePattern: 'YYYY-MM-DD',
           zippedArchive: true,
           maxsize: 5242880, // 5MB
-          maxFiles: 5
+          maxFiles: 5,
         }),
-        
+
         // Combined log file
         new DailyRotateFile({
-          filename: path.join(__dirname, '..', 'logs', 'combined', 'combined-%DATE%.log'),
+          filename: path.join(
+            __dirname,
+            '..',
+            'logs',
+            'combined',
+            'combined-%DATE%.log',
+          ),
           datePattern: 'YYYY-MM-DD',
           zippedArchive: true,
           maxSize: 10485760, // 10MB
-          maxFiles: 10
+          maxFiles: 10,
         }),
       ],
       exceptionHandlers: [
         new DailyRotateFile({
-          filename: path.join(__dirname, '..', 'logs', 'error', 'exceptions-%DATE%.log'),
+          filename: path.join(
+            __dirname,
+            '..',
+            'logs',
+            'error',
+            'exceptions-%DATE%.log',
+          ),
           datePattern: 'YYYY-MM-DD',
           zippedArchive: true,
-        })
+        }),
       ],
       rejectionHandlers: [
         new DailyRotateFile({
-          filename: path.join(__dirname, '..', 'logs', 'error', 'rejections-%DATE%.log'),
+          filename: path.join(
+            __dirname,
+            '..',
+            'logs',
+            'error',
+            'rejections-%DATE%.log',
+          ),
           datePattern: 'YYYY-MM-DD',
           zippedArchive: true,
-        })
-      ]
+        }),
+      ],
     });
   }
 
@@ -109,26 +134,33 @@ class LoggerConfig {
       transports: [
         new winston.transports.Console(),
         new DailyRotateFile({
-          filename: path.join(__dirname, '..', 'logs', 'requests', 'requests-%DATE%.log'),
+          filename: path.join(
+            __dirname,
+            '..',
+            'logs',
+            'requests',
+            'requests-%DATE%.log',
+          ),
           datePattern: 'YYYY-MM-DD',
           zippedArchive: true,
           maxsize: 5242880, // 5MB
-          maxFiles: 5
-        })
+          maxFiles: 5,
+        }),
       ],
       format: winston.format.combine(
         winston.format.colorize(),
-        winston.format.json()
+        winston.format.json(),
       ),
       meta: true,
       colorize: false,
       requestWhitelist: ['url', 'method', 'originalUrl', 'query', 'body'],
       responseWhitelist: ['statusCode', 'body'],
-      dynamicMeta: (req, res) => ({
+      // eslint-disable-next-line no-unused-vars
+      dynamicMeta: (req, _res) => ({
         user: req.user || null,
         ip: req.ip,
-        userAgent: req.get('User-Agent')
-      })
+        userAgent: req.get('User-Agent'),
+      }),
     });
   }
 
@@ -138,17 +170,23 @@ class LoggerConfig {
       transports: [
         new winston.transports.Console(),
         new DailyRotateFile({
-          filename: path.join(__dirname, '..', 'logs', 'requests', 'express-errors-%DATE%.log'),
+          filename: path.join(
+            __dirname,
+            '..',
+            'logs',
+            'requests',
+            'express-errors-%DATE%.log',
+          ),
           datePattern: 'YYYY-MM-DD',
           zippedArchive: true,
           maxsize: 5242880, // 5MB
-          maxFiles: 5
-        })
+          maxFiles: 5,
+        }),
       ],
       format: winston.format.combine(
         winston.format.colorize(),
-        winston.format.json()
-      )
+        winston.format.json(),
+      ),
     });
   }
 }

@@ -1,19 +1,26 @@
 const { Schema, model } = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const config = require('../config')
+const config = require('../config');
 
-const userSchema = new Schema({
-  email: {
-    type: String,
-    required: [true, 'email required'],
-    unique: true,
+const userSchema = new Schema(
+  {
+    email: {
+      type: String,
+      required: [true, 'email required'],
+      unique: true,
+    },
+    password: {
+      type: String,
+      required: [true, 'password required'],
+    },
   },
-  password: {
-    type: String,
-    required: [true, 'password required']
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   },
-}, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } });
+);
 
 userSchema.virtual('roles', {
   ref: 'user_roles',
@@ -37,22 +44,33 @@ userSchema.pre('save', function () {
   user.password = hashPassword;
 });
 
-userSchema.methods.comparePassword = async function (passwordString, hashedPassword) {
+userSchema.methods.comparePassword = async function (
+  passwordString,
+  hashedPassword,
+) {
   return await bcrypt.compare(passwordString, hashedPassword);
 };
 
 userSchema.methods.genRefreshToken = function () {
-  return jwt.sign({
-    userId: this._id,
-    email: this.email
-  }, config.JWT_REFRESHTOKEN_SECRET_KEY, { expiresIn: config.JWT_REFRESHTOKEN_LIFETIME || '7d' });
+  return jwt.sign(
+    {
+      userId: this._id,
+      email: this.email,
+    },
+    config.JWT_REFRESHTOKEN_SECRET_KEY,
+    { expiresIn: config.JWT_REFRESHTOKEN_LIFETIME || '7d' },
+  );
 };
 
 userSchema.methods.genAccessToken = function () {
-  return jwt.sign({
-    userId: this._id,
-    email: this.email
-  }, config.JWT_ACCESSTOKEN_SECRET_KEY, { expiresIn: config.JWT_ACCESSTOKEN_LIFETIME || '15min' });
+  return jwt.sign(
+    {
+      userId: this._id,
+      email: this.email,
+    },
+    config.JWT_ACCESSTOKEN_SECRET_KEY,
+    { expiresIn: config.JWT_ACCESSTOKEN_LIFETIME || '15min' },
+  );
 };
 
 const User = model('users', userSchema);
