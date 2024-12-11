@@ -14,7 +14,9 @@ exports.register = catchAsyncErrors(
     const user = new User(req.body);
     const userRole = new UserRole();
 
-    const defaultRole = await Role.findOne({ name: SYSTEM_ROLES.USER });
+    const defaultRole = await Role.findOne({
+      name: SYSTEM_ROLES.USER,
+    });
 
     if (!defaultRole) {
       return next(Error.badRequest('Cannot found default role'));
@@ -56,7 +58,9 @@ exports.login = catchAsyncErrors('sign-in user', async (req, res, next) => {
 
 exports.logout = async (req, res) => {
   // delete the token
-  await Token.findOneAndDelete({ user: req.user.userId });
+  await Token.findOneAndDelete({
+    user: req.user.userId,
+  });
 
   // clear both tokens cookie
   res
