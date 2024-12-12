@@ -32,7 +32,7 @@ module.exports = (err, req, res, _next) => {
 
   res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
     error: true,
-    message: err.message,
+    message: err || err.message,
     status: 500,
   });
 };
