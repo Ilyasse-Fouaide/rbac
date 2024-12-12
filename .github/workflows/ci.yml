@@ -12,17 +12,13 @@ jobs:
   eslint:
     name: Run eslint scanning
 
-    strategy:
-      matrix:
-        node-version: [18.x, 19.x, 20.x]
-
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup node ${{ matrix.node-version }}
+      - name: Setup node
         uses: actions/setup-node@v4
 
       - name: Intsall dependencies
