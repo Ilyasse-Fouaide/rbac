@@ -43,8 +43,8 @@ const authenticated = async (req, res, next) => {
 
     req.user = refreshTokenPayload.user;
     next();
-  } catch (_error) {
-    next(Error.unAuthorized());
+  } catch (error) {
+    next(error);
   }
 };
 

@@ -16,6 +16,19 @@ const roleSchema = new Schema(
   { toJSON: { virtuals: true }, toObject: { virtuals: true } },
 );
 
+roleSchema.virtual('members', {
+  ref: 'user_roles',
+  localField: '_id',
+  foreignField: 'role',
+  count: true,
+});
+
+roleSchema.virtual('users', {
+  ref: 'user_roles',
+  localField: '_id',
+  foreignField: 'role',
+});
+
 roleSchema.virtual('permissions', {
   ref: 'role_permissions',
   localField: '_id',

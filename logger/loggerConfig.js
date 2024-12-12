@@ -155,7 +155,6 @@ class LoggerConfig {
       colorize: false,
       requestWhitelist: ['url', 'method', 'originalUrl', 'query', 'body'],
       responseWhitelist: ['statusCode', 'body'],
-      // eslint-disable-next-line no-unused-vars
       dynamicMeta: (req, _res) => ({
         user: req.user || null,
         ip: req.ip,

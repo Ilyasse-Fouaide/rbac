@@ -1,7 +1,7 @@
 const User = require('../models/user.model');
 
 class RBAC {
-  static async getUserPermissions(userId = '674f3e5cf51682b3fd602c77') {
+  static async getUserPermissions(userId) {
     const user = await User.findById(userId)
       .populate({
         path: 'roles',

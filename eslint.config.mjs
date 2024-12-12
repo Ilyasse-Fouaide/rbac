@@ -24,6 +24,17 @@ export default [
       eqeqeq: ['error', 'always', { null: 'ignore' }],
       'no-console': 'error',
       quotes: ['error', 'single'],
+      'no-unused-vars': [
+        'error',
+        {
+          vars: 'all',
+          args: 'after-used',
+          caughtErrors: 'all',
+          ignoreRestSiblings: false,
+          reportUsedIgnorePattern: false,
+          argsIgnorePattern: '^_',
+        },
+      ],
     },
   },
   {

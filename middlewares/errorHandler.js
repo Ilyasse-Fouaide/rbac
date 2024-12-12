@@ -1,7 +1,7 @@
-const { StatusCodes } = require('http-status-codes');
+const { StatusCodes, ReasonPhrases } = require('http-status-codes');
 const CustomError = require('../utils/customError');
 
-module.exports = (err, req, res) => {
+module.exports = (err, req, res, _next) => {
   if (err instanceof CustomError) {
     return res
       .status(err.status)
@@ -24,9 +24,15 @@ module.exports = (err, req, res) => {
       .json({ message: `${Object.keys(err.keyValue)} is already used` });
   }
 
+  if (err.name && err.name === 'JsonWebTokenError') {
+    return res
+      .status(StatusCodes.UNAUTHORIZED)
+      .json({ message: ReasonPhrases.UNAUTHORIZED });
+  }
+
   res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
     error: true,
-    message: err.message,
+    message: err || err.message,
     status: 500,
   });
 };
