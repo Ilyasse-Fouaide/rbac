@@ -5,14 +5,17 @@ const Permission = require('../models/permission.model');
 const RolePermission = require('../models/rolePermission.model');
 
 class RoleService {
+  // get roles from db
   static async roles() {
     return await Role.find();
   }
 
+  // get permissions from db
   static async permissions() {
     return await Permission.find();
   }
 
+  // create default roles
   static async initializeSystemRoles() {
     const roles = [
       {
@@ -38,12 +41,9 @@ class RoleService {
     }
   }
 
+  // create default permissions
   static async initializeSystemPermissions() {
-    const permissions = [
-      { name: SYSTEM_PERMISSIONS.MANAGE_USERS },
-      { name: SYSTEM_PERMISSIONS.MANAGE_ROLES },
-      { name: SYSTEM_PERMISSIONS.MANAGE_PROJECTS },
-    ];
+    const permissions = [{ name: SYSTEM_PERMISSIONS.ADMINISTRATOR }];
 
     for (const permission of permissions) {
       await Permission.findOneAndUpdate(
@@ -59,18 +59,19 @@ class RoleService {
   }
 
   static async assignPermissionToRole() {
+    // get roles from db
     const roles = await this.roles();
-    // get admin permissions
+
+    // default admin permissions
     const adminPermissions = (await this.permissions()).filter(
-      (permission) =>
-        permission.name === SYSTEM_PERMISSIONS.MANAGE_USERS ||
-        permission.name === SYSTEM_PERMISSIONS.MANAGE_ROLES ||
-        permission.name === SYSTEM_PERMISSIONS.MANAGE_PROJECTS,
+      (permission) => permission.name === SYSTEM_PERMISSIONS.ADMINISTRATOR,
     );
 
     // assign permissions to admin
     adminPermissions.map(async (permission) => {
+      // get admin role id
       const adminId = roles.find((el) => el.name === SYSTEM_ROLES.ADMIN)._id;
+
       await RolePermission.findOneAndUpdate(
         { role: adminId, permission: permission._id },
         { role: adminId, permission: permission._id },

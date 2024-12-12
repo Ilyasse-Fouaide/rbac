@@ -1,15 +1,15 @@
 /* eslint-disable no-console */
 const mongoose = require('mongoose');
 const chalk = require('chalk');
-const RoleService = require('../services/roleService');
+// const RoleService = require('../services/roleService');
 
-const initalizeRoleService = async () => {
-  await RoleService.initializeSystemRoles();
-  console.log('----------------------------');
-  await RoleService.initializeSystemPermissions();
-  console.log('----------------------------');
-  await RoleService.assignPermissionToRole();
-};
+// const initalizeRoleService = async () => {
+//   await RoleService.initializeSystemRoles();
+//   console.log('----------------------------');
+//   await RoleService.initializeSystemPermissions();
+//   console.log('----------------------------');
+//   await RoleService.assignPermissionToRole();
+// };
 
 const dbconnect = async (URI) => {
   // mongoose.set('toJSON', { virtuals: true });
