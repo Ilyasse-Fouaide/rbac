@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const Token = require('../models/token.model');
+const { Token } = require('../models');
 const setCookie = require('./setCookie');
 const Error = require('../custom-error');
 const config = require('../config');

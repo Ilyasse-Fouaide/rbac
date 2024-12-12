@@ -1,8 +1,8 @@
 const { SYSTEM_ROLES } = require('../constants/roles');
 const { SYSTEM_PERMISSIONS } = require('../constants/permissions');
-const Role = require('../models/role.model');
-const Permission = require('../models/permission.model');
-const RolePermission = require('../models/rolePermission.model');
+const { Role } = require('../models');
+const { Permission } = require('../models');
+const { RolePermission } = require('../models');
 
 class RoleService {
   // get roles from db

@@ -1,5 +1,5 @@
 const { StatusCodes } = require('http-status-codes');
-const Role = require('../models/role.model');
+const { Role } = require('../models');
 const catchAsyncErrors = require('../utils/catchAsyncErrors');
 const Error = require('../custom-error');
 

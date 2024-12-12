@@ -1,5 +1,5 @@
 const { StatusCodes } = require('http-status-codes');
-const User = require('../models/user.model');
+const { User } = require('../models');
 const catchAsyncErrors = require('../utils/catchAsyncErrors');
 const { registerJwtTokens } = require('../utils/jwt.utils');
 

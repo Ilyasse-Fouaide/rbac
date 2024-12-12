@@ -1,11 +1,11 @@
 const catchAsyncErrors = require('../utils/catchAsyncErrors');
-const User = require('../models/user.model');
+const { User } = require('../models');
 const Error = require('../custom-error');
 const { StatusCodes } = require('http-status-codes');
-const Role = require('../models/role.model');
+const { Role } = require('../models');
 const { SYSTEM_ROLES } = require('../constants/roles');
-const UserRole = require('../models/userRole.model');
-const Token = require('../models/token.model');
+const { UserRole } = require('../models');
+const { Token } = require('../models');
 const { registerJwtTokens } = require('../utils/jwt.utils');
 
 exports.register = catchAsyncErrors(

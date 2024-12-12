@@ -1,5 +1,5 @@
 const { StatusCodes } = require('http-status-codes');
-const Permission = require('../models/permission.model');
+const { Permission } = require('../models');
 const catchAsyncErrors = require('../utils/catchAsyncErrors');
 const Error = require('../custom-error');
 

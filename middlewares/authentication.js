@@ -4,7 +4,7 @@ const {
   verifyJwtToken,
   attachCookiesToResponse,
 } = require('../utils/jwt.utils');
-const Token = require('../models/token.model');
+const { Token } = require('../models');
 
 const authenticated = async (req, res, next) => {
   const { access_token, refresh_token } = req.cookies;
