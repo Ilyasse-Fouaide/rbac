@@ -50,7 +50,9 @@ app.get('/', (req, res) => {
 app.use('/api/v1/auth', require('./routes/auth.routes'));
 app.use('/api/v1/auth/google', require('./routes/google.routes'));
 app.use('/api/v1/roles', require('./routes/role.routes'));
+app.use('/api/v1/permissions', require('./routes/permissions.routes'));
 app.use('/api/v1/user-role', require('./routes/userRole.routes'));
+app.use('/api/v1/role-permission', require('./routes/rolePermission.routes'));
 
 app.use(notFound);
 

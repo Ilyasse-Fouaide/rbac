@@ -51,11 +51,13 @@ exports.removeUsersFromRole = catchAsyncErrors(
   async (req, res, _next) => {
     const { userIds, roleIds } = req.body;
 
-    await UserRole.deleteMany({
+    const result = await UserRole.deleteMany({
       user: { $in: userIds },
       role: { $in: roleIds },
     });
 
-    res.status(StatusCodes.OK).json({ message: 'removed role successfully' });
+    res.status(StatusCodes.OK).json({
+      message: `removed ${result.deletedCount} role successfully`,
+    });
   },
 );
