@@ -15,6 +15,6 @@ router
 
 router
   .route('/remove-permissions-from-role')
-  .post(rolePermission.removePermissionsFromRole);
+  .delete(rolePermission.removePermissionsFromRole);
 
 module.exports = router;
