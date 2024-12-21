@@ -22,7 +22,7 @@
 
 - [x] automate eslinter
 
-- [ ] Implement a Role Management Dashboard for admins to create, assign, and edit roles and permissions dynamically.
+- [x] Implement a Role Management Dashboard for admins to create, assign, and edit roles and permissions dynamically.
 
 - [ ] Fix - assigning role to user on google authentication.
 
