@@ -1,5 +1,5 @@
 const { StatusCodes } = require('http-status-codes');
-const { Role } = require('../models');
+const { Role, RolePermission } = require('../models');
 const catchAsyncErrors = require('../utils/catchAsyncErrors');
 const Error = require('../custom-error');
 
@@ -54,6 +54,9 @@ exports.delete = catchAsyncErrors('delete role', async (req, res, next) => {
     return next(Error.notFound('role not found'));
   }
 
+  // Remove the associated roles from the `role_permissions` model when deleting roles
+  await RolePermission.deleteOne({ role: id });
+
   res.status(StatusCodes.OK).json(role);
 });
 
@@ -67,6 +70,10 @@ exports.deleteMultiple = catchAsyncErrors(
     }
 
     const result = await Role.deleteMany({ _id: { $in: ids } });
+
+    // Remove all the associated roles from the `role_permissions` model when deleting roles
+    await RolePermission.deleteMany({ role: { $in: ids } });
+
     res
       .status(StatusCodes.OK)
       .json({ message: `${result.deletedCount} roles deleted successfully` });

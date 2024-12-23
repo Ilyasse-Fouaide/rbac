@@ -77,6 +77,7 @@ class RoleService {
         { role: adminId, permission: permission._id },
         { upsert: true, new: true },
       );
+
       console.log(
         `- ✅ Successfully assigned '${permission.name}' to '${SYSTEM_ROLES.ADMIN}'`,
       );

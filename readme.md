@@ -28,6 +28,10 @@
 
 - [ ] Inherit permissions
 
+- [x] Remove the associated roles/permissions from the `role_permissions` model when deleting roles/permissions
+
+- [ ] Add `user_permissions` model
+
 - [ ] Implement Logger dashboard
 
 - [ ] API Documentation using `swagger-jsdoc` or `swagger-ui-express`
