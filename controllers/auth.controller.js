@@ -3,7 +3,7 @@ const { User } = require('../models');
 const Error = require('../custom-error');
 const { StatusCodes } = require('http-status-codes');
 const { Role } = require('../models');
-const { SYSTEM_ROLES } = require('../constants/roles');
+const { DEFAUL_ROLE } = require('../constants/roles');
 const { UserRole } = require('../models');
 const { Token } = require('../models');
 const { registerJwtTokens } = require('../utils/jwt.utils');
@@ -15,7 +15,7 @@ exports.register = catchAsyncErrors(
     const userRole = new UserRole();
 
     const defaultRole = await Role.findOne({
-      name: SYSTEM_ROLES.USER,
+      name: DEFAUL_ROLE,
     });
 
     if (!defaultRole) {

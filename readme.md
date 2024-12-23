@@ -24,7 +24,9 @@
 
 - [x] Implement a Role Management Dashboard for admins to create, assign, and edit roles and permissions dynamically.
 
-- [ ] Fix - assigning role to user on google authentication.
+- [x] Fix - assigning role to user on google authentication.
+
+- [ ] Inherit permissions
 
 - [ ] Implement Logger dashboard
 
