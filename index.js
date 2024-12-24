@@ -12,6 +12,7 @@ const passport = require('passport');
 const googlestrategy = require('./auth/google');
 const { rateLimit } = require('express-rate-limit');
 const cors = require('cors');
+const path = require('path');
 
 const app = express();
 
@@ -31,6 +32,7 @@ app.use(
   }),
 );
 
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(helmet());
 app.use(limiter);
 app.use(express.json());
