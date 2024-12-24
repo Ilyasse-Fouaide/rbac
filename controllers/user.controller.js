@@ -1,12 +1,21 @@
 const { StatusCodes } = require('http-status-codes');
-const { User, UserRole } = require('../models');
+const { User, UserRole, Role } = require('../models');
 const catchAsyncErrors = require('../utils/catchAsyncErrors');
 const Error = require('../custom-error');
 const saveAvatarsToFile = require('../utils/saveAvatarsToFile.utils');
+const { DEFAUL_ROLE } = require('../constants/roles');
 
-exports.create = catchAsyncErrors('create user', async (req, res) => {
+exports.create = catchAsyncErrors('create user', async (req, res, next) => {
   const { email, password, role } = req.body;
   const images = await saveAvatarsToFile(email);
+
+  const defaultRole = await Role.findOne({
+    name: DEFAUL_ROLE,
+  });
+
+  if (!defaultRole) {
+    return next(Error.badRequest('Cannot found default role'));
+  }
 
   const user = new User({
     email,
@@ -23,7 +32,7 @@ exports.create = catchAsyncErrors('create user', async (req, res) => {
   await user.save();
   // assign user to default role
   userRole.user = user._id;
-  userRole.role = role;
+  userRole.role = role || defaultRole._id;
   await userRole.save();
 
   return res.status(StatusCodes.CREATED).json({
@@ -70,6 +79,11 @@ exports.index = catchAsyncErrors('list of users', async (req, res) => {
     return {
       id: user._id,
       email: user.email,
+      avatars: {
+        avatarUrl: user?.avatars?.avatarUrl,
+        smallAvatarUrl: user?.avatars?.smallAvatarUrl,
+        largeAvatarUrl: user?.avatars?.largeAvatarUrl,
+      },
       roles: roles,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
