@@ -48,7 +48,24 @@ exports.index = catchAsyncErrors('list of users', async (req, res) => {
     .limit(limit)
     .sort(sort ? sort.split(',').join(' ') : 'createdAt')
     .select(select ? select.split(',').join(' ') : '-__v -password')
+    .populate({ path: 'roles', populate: { path: 'role' } })
     .lean();
+
+  // Mapping user roles
+  const usersData = users.map((user) => {
+    // Get role names from populated roles
+    const roles = user.roles.map((role) => role.role.name);
+
+    return {
+      id: user._id,
+      email: user.email,
+      roles: roles,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    };
+  });
+
+  const data = usersData;
 
   res.status(StatusCodes.OK).json({
     pagination: {
@@ -60,7 +77,7 @@ exports.index = catchAsyncErrors('list of users', async (req, res) => {
         per_page: limit,
       },
     },
-    data: users,
+    data,
   });
 });
 

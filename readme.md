@@ -30,6 +30,8 @@
 
 - [x] Remove the associated roles/permissions from the `role_permissions` model when deleting roles/permissions
 
+- [ ] add profile management
+
 - [ ] Add `user_permissions` model
 
 - [ ] add user management
