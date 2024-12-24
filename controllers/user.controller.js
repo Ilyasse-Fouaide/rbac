@@ -2,11 +2,22 @@ const { StatusCodes } = require('http-status-codes');
 const { User, UserRole } = require('../models');
 const catchAsyncErrors = require('../utils/catchAsyncErrors');
 const Error = require('../custom-error');
+const saveAvatarsToFile = require('../utils/saveAvatarsToFile.utils');
 
 exports.create = catchAsyncErrors('create user', async (req, res) => {
   const { email, password, role } = req.body;
+  const images = await saveAvatarsToFile(email);
 
-  const user = new User({ email, password });
+  const user = new User({
+    email,
+    password,
+    avatars: {
+      avatarUrl: images.avatarUrl,
+      smallAvatarUrl: images.smallAvatarUrl,
+      largeAvatarUrl: images.largeAvatarUrl,
+    },
+  });
+
   const userRole = new UserRole();
 
   await user.save();
