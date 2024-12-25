@@ -34,9 +34,9 @@
 
 - [ ] Add `user_permissions` model
 
-- [ ] add user management
+- [x] add user management
 
-  - [ ] display detailled users info as roles and permissions
+  - [x] display detailled users info as roles and permissions
 
 - [ ] update package.json outdated packages without broking the app (safely update npm packages)
 

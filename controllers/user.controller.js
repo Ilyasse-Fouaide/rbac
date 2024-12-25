@@ -77,7 +77,7 @@ exports.index = catchAsyncErrors('list of users', async (req, res) => {
     const roles = user.roles.map((role) => role.role.name);
 
     return {
-      id: user._id,
+      _id: user._id,
       email: user.email,
       avatars: {
         avatarUrl: user?.avatars?.avatarUrl,
