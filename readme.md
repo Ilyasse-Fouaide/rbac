@@ -30,7 +30,15 @@
 
 - [x] Remove the associated roles/permissions from the `role_permissions` model when deleting roles/permissions
 
+- [ ] add profile management
+
 - [ ] Add `user_permissions` model
+
+- [x] add user management
+
+  - [x] display detailled users info as roles and permissions
+
+- [ ] update package.json outdated packages without broking the app (safely update npm packages)
 
 - [ ] Implement Logger dashboard
 

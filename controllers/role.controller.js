@@ -21,13 +21,34 @@ exports.index = catchAsyncErrors('show all roles', async (req, res) => {
 exports.show = catchAsyncErrors('show single role', async (req, res, next) => {
   const { id } = req.params;
 
-  const role = await Role.findById(id);
+  const role = await Role.findById(id)
+    .populate({
+      path: 'users',
+      select: 'user -role -_id',
+      populate: { path: 'user', select: '_id email avatars' },
+    })
+    .populate({
+      path: 'permissions',
+      select: 'permission -role -_id',
+      populate: 'permission',
+    })
+    .lean();
 
   if (!role) {
     return next(Error.badRequest('Role not found'));
   }
 
-  return res.status(StatusCodes.OK).json(role);
+  const users = role.users.map((user) => {
+    return user.user;
+  });
+
+  const permissions = role.permissions.map((permission) => {
+    return permission.permission;
+  });
+
+  const data = { ...role, members: users.length, users, permissions };
+
+  return res.status(StatusCodes.OK).json(data);
 });
 
 exports.update = catchAsyncErrors('update role', async (req, res, next) => {

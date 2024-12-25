@@ -26,6 +26,11 @@ exports.google = catchAsyncErrors(
       const newUser = await User.create({
         email: payload.email,
         password: '123', // Default password
+        avatars: {
+          avatarUrl: payload.picture,
+          smallAvatarUrl: payload.picture,
+          largeAvatarUrl: payload.picture,
+        },
       });
 
       // assign user to default role

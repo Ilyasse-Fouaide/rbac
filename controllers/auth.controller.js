@@ -7,6 +7,7 @@ const { DEFAUL_ROLE } = require('../constants/roles');
 const { UserRole } = require('../models');
 const { Token } = require('../models');
 const { registerJwtTokens } = require('../utils/jwt.utils');
+const saveAvatarsToFile = require('../utils/saveAvatarsToFile.utils');
 
 exports.register = catchAsyncErrors(
   'registering user',
@@ -22,7 +23,15 @@ exports.register = catchAsyncErrors(
       return next(Error.badRequest('Cannot found default role'));
     }
 
+    // save the default avatar
+    const images = await saveAvatarsToFile(req.body.email);
+
+    user.avatars.avatarUrl = images.avatarUrl;
+    user.avatars.smallAvatarUrl = images.smallAvatarUrl;
+    user.avatars.largeAvatarUrl = images.largeAvatarUrl;
+
     await user.save();
+
     // assign user to default role
     userRole.user = user._id;
     userRole.role = defaultRole._id;
