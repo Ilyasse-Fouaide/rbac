@@ -43,15 +43,11 @@ app.use(cookieParser());
 app.use(passport.initialize());
 passport.use(googlestrategy);
 
-// make login button for testing
-app.get('/', (req, res) => {
-  res.send('<a href="/api/v1/auth/google">google</a>');
-});
-
 // -- Routes --
 app.use('/api/v1/auth', require('./routes/auth.routes'));
 app.use('/api/v1/auth/google', require('./routes/google.routes'));
 app.use('/api/v1/users', require('./routes/user.routes'));
+app.use('/api/v1/profile', require('./routes/profile.routes'));
 app.use('/api/v1/roles', require('./routes/role.routes'));
 app.use('/api/v1/permissions', require('./routes/permissions.routes'));
 app.use('/api/v1/user-role', require('./routes/userRole.routes'));

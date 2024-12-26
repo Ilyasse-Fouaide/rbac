@@ -1,5 +1,10 @@
 const { Schema, model } = require('mongoose');
 const bcrypt = require('bcryptjs');
+const UserRole = require('./userRole.model');
+const Image = require('./image.model');
+const fs = require('fs/promises');
+const path = require('path');
+const Error = require('../custom-error');
 
 const userSchema = new Schema(
   {
@@ -8,10 +13,9 @@ const userSchema = new Schema(
       required: [true, 'email required'],
       unique: true,
     },
-    avatars: {
-      avatarUrl: String,
-      smallAvatarUrl: String,
-      largeAvatarUrl: String,
+    avatar: {
+      type: Schema.Types.ObjectId,
+      ref: 'images',
     },
     password: {
       type: String,
@@ -52,6 +56,53 @@ userSchema.methods.comparePassword = async function (
   hashedPassword,
 ) {
   return await bcrypt.compare(passwordString, hashedPassword);
+};
+
+// handle cascading delete
+userSchema.pre('findOneAndDelete', async function (next) {
+  const user = await this.model.findOne(this.getQuery());
+
+  if (!user) return next();
+
+  await Promise.all([
+    UserRole.deleteOne({ user: user._id }),
+    Image.findByIdAndDelete(user.avatar),
+    deleteUserImages(user._id, next),
+  ]);
+});
+
+userSchema.pre('deleteMany', async function (next) {
+  const users = await this.model.find(this.getQuery());
+
+  if (users.length === 0) {
+    return next(Error.notFound('No users found for the provided IDs'));
+  }
+
+  await Promise.all(
+    users.map(async (user) => {
+      await UserRole.deleteOne({ user: user._id });
+      await Image.findByIdAndDelete(user.avatar);
+      deleteUserImages(user._id, next);
+    }),
+  );
+});
+
+// Utility function for deleting images
+const deleteUserImages = async (userId, next) => {
+  const defaultImageSizes = [32, 64, 128];
+  const baseDir = path.join(__dirname, '..', 'public', 'images', 'avatars');
+
+  return await Promise.all(
+    defaultImageSizes.map(async (el) => {
+      const pathToImages = path.join(baseDir, `${el}`, `${userId}.webp`);
+      try {
+        await fs.access(pathToImages);
+        await fs.unlink(pathToImages);
+      } catch (error) {
+        next(Error.badRequest(error));
+      }
+    }),
+  );
 };
 
 const User = model('users', userSchema);

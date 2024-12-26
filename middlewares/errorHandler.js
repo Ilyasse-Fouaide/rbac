@@ -30,6 +30,33 @@ module.exports = (err, req, res, _next) => {
       .json({ message: ReasonPhrases.UNAUTHORIZED });
   }
 
+  if (err.code && err.code === 'ENOENT') {
+    return res.status(StatusCodes.NOT_FOUND).json({
+      message: `${err.path} not found`,
+    });
+  }
+
+  if (err.name && err.name === 'MulterError') {
+    switch (err.code) {
+      case 'LIMIT_FILE_SIZE':
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          message: 'File is too large. Please upload a file smaller than 5MB.',
+        });
+      case 'LIMIT_UNEXPECTED_FILE':
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          message: 'Unexpected file type. Please upload the correct file.',
+        });
+      case 'LIMIT_FILE_COUNT':
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          message: 'Too many files uploaded. Please upload only one file.',
+        });
+      default:
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+          message: `An unexpected error occurred during file upload: ${err.message}`,
+        });
+    }
+  }
+
   res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
     error: true,
     message: err || err.message,

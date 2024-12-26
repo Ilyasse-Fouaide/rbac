@@ -30,7 +30,17 @@
 
 - [x] Remove the associated roles/permissions from the `role_permissions` model when deleting roles/permissions
 
-- [ ] add profile management
+- [x] add profile management
+
+  - [x] View Profile
+  - [x] Get user image
+  - [x] Update Profile
+  - [x] Change password
+  - [x] Upload Avatar
+  - [x] Update Avatar
+  - [x] Delete account
+
+- [ ] IhaveAccess middleware
 
 - [ ] Add `user_permissions` model
 

@@ -1,19 +1,22 @@
 const catchAsyncErrors = require('../utils/catchAsyncErrors');
-const { User } = require('../models');
+const { User, Image, UserRole } = require('../models');
 const Error = require('../custom-error');
 const { StatusCodes } = require('http-status-codes');
 const { Role } = require('../models');
 const { DEFAUL_ROLE } = require('../constants/roles');
-const { UserRole } = require('../models');
 const { Token } = require('../models');
 const { registerJwtTokens } = require('../utils/jwt.utils');
 const saveAvatarsToFile = require('../utils/saveAvatarsToFile.utils');
+const config = require('../config');
 
 exports.register = catchAsyncErrors(
   'registering user',
   async (req, res, next) => {
     const user = new User(req.body);
     const userRole = new UserRole();
+    const image = new Image();
+
+    await user.save();
 
     const defaultRole = await Role.findOne({
       name: DEFAUL_ROLE,
@@ -23,13 +26,19 @@ exports.register = catchAsyncErrors(
       return next(Error.badRequest('Cannot found default role'));
     }
 
-    // save the default avatar
-    const images = await saveAvatarsToFile(req.body.email);
+    // store avatar in db
+    const images = await saveAvatarsToFile(req.body.email, user._id);
+    image.imageType = 'webp';
+    image.smallImage.url = `${config.APP_URL}/${images.smallAvatarUrl}`;
+    image.smallImage.path = images.smallAvatarUrl;
+    image.mediumImage.url = `${config.APP_URL}/${images.mediumAvatarUrl}`;
+    image.mediumImage.path = images.mediumAvatarUrl;
+    image.largeImage.url = `${config.APP_URL}/${images.largeAvatarUrl}`;
+    image.largeImage.path = images.largeAvatarUrl;
+    await image.save();
 
-    user.avatars.avatarUrl = images.avatarUrl;
-    user.avatars.smallAvatarUrl = images.smallAvatarUrl;
-    user.avatars.largeAvatarUrl = images.largeAvatarUrl;
-
+    // assign avatar to a user
+    user.avatar = image._id;
     await user.save();
 
     // assign user to default role
@@ -84,7 +93,3 @@ exports.logout = async (req, res) => {
     })
     .json({ message: 'Logged out!.' });
 };
-
-exports.profile = catchAsyncErrors('fetch user profile', async (req, res) => {
-  res.status(StatusCodes.OK).json(req.user);
-});

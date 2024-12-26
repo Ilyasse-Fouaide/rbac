@@ -4,11 +4,11 @@ const randomColor = require('randomcolor');
 class Sharp {
   constructor(defaultBgColor) {
     this.defaultImageSizes = [32, 64, 128];
-    this.defaultSize = 200;
+    this.defaultSvgSize = 200;
     this.defaultBgColor = defaultBgColor;
   }
 
-  generateAvatarSVG(text, size = this.defaultSize) {
+  generateAvatarSVG(text, size = this.defaultSvgSize) {
     const fontSize = size / 2;
     const firstLetter = text.charAt(0).toUpperCase();
     const bgColor =
@@ -22,7 +22,7 @@ class Sharp {
       <text
         x="50%"
         y="50%"
-        dy=".32em"
+        dy=".35em"
         dominant-baseline="middle"
         text-anchor="middle"
         fill="white"
@@ -35,7 +35,11 @@ class Sharp {
     return svg;
   }
 
-  async convertToImage(svg, size) {
+  async resizeImage(imageBuffer, size) {
+    return await sharp(imageBuffer).webp().resize(size, size).toBuffer();
+  }
+
+  async convertSvgToImage(svg, size) {
     const buffer = Buffer.from(svg);
     return await sharp(buffer).webp().resize(size, size).toBuffer();
   }
@@ -43,9 +47,16 @@ class Sharp {
   async createAvatar(name, sizes = this.defaultImageSizes) {
     const svg = this.generateAvatarSVG(name);
     const images = await Promise.all(
-      sizes.map((size) => this.convertToImage(svg, size)),
+      sizes.map((size) => this.convertSvgToImage(svg, size)),
     );
     // array of buffers
+    return images;
+  }
+
+  async createImage(image, sizes = this.defaultImageSizes) {
+    const images = await Promise.all(
+      sizes.map((size) => this.resizeImage(image, size)),
+    );
     return images;
   }
 }
