@@ -9,20 +9,17 @@ router.use(authentication);
 
 router.route('/').get(profile.profile);
 
-// apply middleware
-router.use(canHaveAccess);
-
 // Set up multer storage
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-router.route('/:userId/image').get(profile.userImage);
+router.route('/:userId/image').get(canHaveAccess, profile.userImage);
 router
   .route('/:userId/avatar')
-  .post(upload.single('avatar'), profile.saveAvatar);
+  .post(canHaveAccess, upload.single('avatar'), profile.saveAvatar);
 
-router.route('/:userId').patch(profile.update);
-router.route('/:userId/password').patch(profile.updatePassword);
-router.route('/:userId').delete(profile.deleteAccount);
+router.route('/:userId').patch(canHaveAccess, profile.update);
+router.route('/:userId/password').patch(canHaveAccess, profile.updatePassword);
+router.route('/:userId').delete(canHaveAccess, profile.deleteAccount);
 
 module.exports = router;

@@ -86,7 +86,9 @@ exports.updatePassword = catchAsyncErrors(
     user.password = newPassword;
     await user.save();
 
-    res.status(StatusCodes.OK).json(req.user);
+    res
+      .status(StatusCodes.OK)
+      .json({ message: 'Password updated successfully' });
   },
 );
 
