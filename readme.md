@@ -40,7 +40,7 @@
   - [x] Update Avatar
   - [x] Delete account
 
-- [ ] IhaveAccess middleware
+- [x] IhaveAccess middleware
 
 - [ ] Add `user_permissions` model
 

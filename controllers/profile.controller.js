@@ -9,10 +9,11 @@ exports.profile = catchAsyncErrors('fetch user profile', async (req, res) => {
   res.status(StatusCodes.OK).json(req.user);
 });
 
+// switch to image controller
 exports.userImage = catchAsyncErrors(
   'fetch user profile',
   async (req, res, next) => {
-    const { size = 32 } = req.query;
+    const { size = 32, dir = 'avatars' } = req.query;
     const { userId } = req.params;
 
     if (!userId) {
@@ -24,7 +25,7 @@ exports.userImage = catchAsyncErrors(
       '..',
       'public',
       'images',
-      'avatars',
+      `${dir}`,
       `${size}`,
       `${userId}.webp`,
     );
@@ -142,15 +143,7 @@ exports.saveAvatar = catchAsyncErrors(
 
 exports.deleteAccount = catchAsyncErrors(
   'delete user account',
-  async (req, res, next) => {
-    const { userId } = req.params;
-    const id = req.user.userId;
-
-    // Make sure the user can only delete their own account
-    if (userId !== id) {
-      next(Error.badRequest('You can only delete your own account'));
-    }
-
+  async (req, res) => {
     res.status(StatusCodes.OK).json(req.user);
   },
 );

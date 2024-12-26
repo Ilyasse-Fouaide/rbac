@@ -20,9 +20,23 @@ class RBAC {
     );
   }
 
+  static async getUserRole(userId) {
+    const user = await User.findById(userId).populate({
+      path: 'roles',
+      populate: { path: 'role' },
+    });
+
+    return user.roles.map((role) => role.role.name);
+  }
+
   static async checkPermission(userId, requiredPermission) {
     const permissions = await this.getUserPermissions(userId);
     return permissions.includes(requiredPermission);
+  }
+
+  static async isAdmin(userId) {
+    const roles = await this.getUserRole(userId);
+    return roles.includes('admin');
   }
 }
 
