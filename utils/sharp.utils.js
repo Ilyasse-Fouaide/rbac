@@ -1,5 +1,5 @@
 const sharp = require('sharp');
-const randomColor = require('randomcolor');
+// const randomColor = require('randomcolor');
 
 class Sharp {
   constructor(defaultBgColor) {
@@ -8,14 +8,43 @@ class Sharp {
     this.defaultBgColor = defaultBgColor;
   }
 
+  randomColor(text) {
+    const colors = [
+      '#F44336', // Red 500
+      '#E91E63', // Pink 500
+      '#9C27B0', // Purple 500
+      '#673AB7', // Deep Purple 500
+      '#3F51B5', // Indigo 500
+      '#2196F3', // Blue 500
+      '#03A9F4', // Light Blue 500
+      '#00BCD4', // Cyan 500
+      '#009688', // Teal 500
+      '#4CAF50', // Green 500
+      '#8BC34A', // Light Green 500
+      '#CDDC39', // Lime 500
+      '#FFEB3B', // Yellow 500
+      '#FFC107', // Amber 500
+      '#FF9800', // Orange 500
+      '#FF5722', // Deep Orange 500
+      '#795548', // Brown 500
+      '#9E9E9E', // Grey 500
+      '#607D8B', // Blue Grey 500
+    ];
+
+    let hash = 0;
+    for (let i = 0; i < text.length; i++) {
+      hash = text.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const index = Math.abs(hash % colors.length);
+    const bgColor = colors[index];
+
+    return bgColor;
+  }
+
   generateAvatarSVG(text, size = this.defaultSvgSize) {
     const fontSize = size / 2;
     const firstLetter = text.charAt(0).toUpperCase();
-    const bgColor =
-      this.defaultBgColor ||
-      randomColor({
-        luminosity: 'bright',
-      });
+    const bgColor = this.defaultBgColor || this.randomColor(text);
 
     const svg = `<svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}">
       <rect width="100%" height="100%" fill="${bgColor}"/>
