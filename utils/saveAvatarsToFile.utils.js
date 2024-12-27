@@ -1,24 +1,24 @@
 const fs = require('fs/promises');
-const { v4: uuidv4 } = require('uuid');
 const Sharp = require('./sharp.utils');
-const config = require('../config');
 
-async function saveAvatarsToFile(name) {
+async function saveAvatarsToFile(name, userId) {
   try {
     const sharp = new Sharp();
     const buffers = await sharp.createAvatar(name);
     const promises = buffers.map(async (buffer, index) => {
-      const imageName = `${uuidv4()}-${sharp.defaultImageSizes[index]}px.webp`;
-      const file = `public/images/avatars/${imageName}`;
+      const imageName = `${userId}.webp`;
+      // file name will be public/images/avatars/{32,64,128}/name.webp
+      const imageSize = sharp.defaultImageSizes[index];
+      const file = `public/images/avatars/${imageSize}/${imageName}`;
       await fs.writeFile(file, buffer);
-      return `${config.APP_URL}/images/avatars/${imageName}`;
+      return `images/avatars/${imageSize}/${imageName}`;
     });
 
     const images = await Promise.all(promises);
 
     const avatars = {
-      avatarUrl: images[0],
-      smallAvatarUrl: images[1],
+      smallAvatarUrl: images[0],
+      mediumAvatarUrl: images[1],
       largeAvatarUrl: images[2],
     };
 

@@ -25,7 +25,14 @@ exports.show = catchAsyncErrors('show single role', async (req, res, next) => {
     .populate({
       path: 'users',
       select: 'user -role -_id',
-      populate: { path: 'user', select: '_id email avatars' },
+      populate: {
+        path: 'user',
+        select: '_id email avatar',
+        populate: {
+          path: 'avatar',
+          select: 'smallImage mediumImage largeImage',
+        },
+      },
     })
     .populate({
       path: 'permissions',

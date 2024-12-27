@@ -1,13 +1,13 @@
 const { StatusCodes } = require('http-status-codes');
-const { User, UserRole, Role } = require('../models');
+const { User, UserRole, Role, Image } = require('../models');
 const catchAsyncErrors = require('../utils/catchAsyncErrors');
 const Error = require('../custom-error');
 const saveAvatarsToFile = require('../utils/saveAvatarsToFile.utils');
 const { DEFAUL_ROLE } = require('../constants/roles');
+const config = require('../config');
 
 exports.create = catchAsyncErrors('create user', async (req, res, next) => {
   const { email, password, role } = req.body;
-  const images = await saveAvatarsToFile(email);
 
   const defaultRole = await Role.findOne({
     name: DEFAUL_ROLE,
@@ -17,19 +17,30 @@ exports.create = catchAsyncErrors('create user', async (req, res, next) => {
     return next(Error.badRequest('Cannot found default role'));
   }
 
-  const user = new User({
-    email,
-    password,
-    avatars: {
-      avatarUrl: images.avatarUrl,
-      smallAvatarUrl: images.smallAvatarUrl,
-      largeAvatarUrl: images.largeAvatarUrl,
-    },
-  });
-
+  const user = new User();
   const userRole = new UserRole();
+  const image = new Image();
 
+  // save user
+  user.email = email;
+  user.password = password;
   await user.save();
+
+  // store avatar in db
+  const images = await saveAvatarsToFile(email, user._id);
+  image.imageType = 'webp';
+  image.smallImage.url = `${config.APP_URL}/${images.smallAvatarUrl}`;
+  image.smallImage.path = images.smallAvatarUrl;
+  image.mediumImage.url = `${config.APP_URL}/${images.mediumAvatarUrl}`;
+  image.mediumImage.path = images.mediumAvatarUrl;
+  image.largeImage.url = `${config.APP_URL}/${images.largeAvatarUrl}`;
+  image.largeImage.path = images.largeAvatarUrl;
+  await image.save();
+
+  // assign avatar to a user
+  user.avatar = image._id;
+  await user.save();
+
   // assign user to default role
   userRole.user = user._id;
   userRole.role = role || defaultRole._id;
@@ -69,6 +80,7 @@ exports.index = catchAsyncErrors('list of users', async (req, res) => {
     .sort(sort ? sort.split(',').join(' ') : 'createdAt')
     .select(select ? select.split(',').join(' ') : '-__v -password')
     .populate({ path: 'roles', populate: { path: 'role' } })
+    .populate({ path: 'avatar', select: 'smallImage mediumImage largeImage' })
     .lean();
 
   // Mapping user roles
@@ -79,11 +91,7 @@ exports.index = catchAsyncErrors('list of users', async (req, res) => {
     return {
       _id: user._id,
       email: user.email,
-      avatars: {
-        avatarUrl: user?.avatars?.avatarUrl,
-        smallAvatarUrl: user?.avatars?.smallAvatarUrl,
-        largeAvatarUrl: user?.avatars?.largeAvatarUrl,
-      },
+      avtar: user.avatar,
       roles: roles,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
@@ -141,16 +149,13 @@ exports.update = catchAsyncErrors('update user', async (req, res, next) => {
 exports.delete = catchAsyncErrors('delete user', async (req, res, next) => {
   const { id: userId } = req.params;
 
-  const role = await User.findByIdAndDelete(userId);
+  const user = await User.findByIdAndDelete(userId);
 
-  if (!role) {
-    return next(Error.notFound('role not found'));
+  if (!user) {
+    return next(Error.notFound('user not found'));
   }
 
-  // Remove the associated user from the `user_roles` model when deleting user
-  await UserRole.deleteOne({ user: userId });
-
-  res.status(StatusCodes.OK).json(role);
+  res.status(StatusCodes.OK).json(user);
 });
 
 exports.deleteMultiple = catchAsyncErrors(
@@ -163,9 +168,6 @@ exports.deleteMultiple = catchAsyncErrors(
     }
 
     const result = await User.deleteMany({ _id: { $in: ids } });
-
-    // Remove all the associated users from the `user_roles` model when deleting users
-    await UserRole.deleteMany({ user: { $in: ids } });
 
     res
       .status(StatusCodes.OK)

@@ -19,7 +19,7 @@ export default [
   },
   {
     rules: {
-      indent: ['error', 2],
+      indent: ['error', 2, { SwitchCase: 1 }],
       semi: ['warn', 'always'],
       eqeqeq: ['error', 'always', { null: 'ignore' }],
       'no-console': 'error',

@@ -4,7 +4,6 @@ const setCookie = require('./setCookie');
 const Error = require('../custom-error');
 const config = require('../config');
 const crypto = require('crypto');
-const { StatusCodes } = require('http-status-codes');
 
 function createTokenUser(user) {
   return { userId: user._id, email: user.email };
@@ -49,7 +48,7 @@ async function registerJwtTokens(user, req, res, next) {
     }
     const existingRefreshToken = existingToken.refreshToken;
     attachCookiesToResponse(res, userPayload, existingRefreshToken);
-    return res.status(StatusCodes.OK).json({});
+    return;
   }
 
   const refreshToken = crypto.randomBytes(48).toString('hex');

@@ -8,7 +8,7 @@ const requirePermission = (permission) => {
       const authorized = await RBAC.checkPermission(userId, permission);
 
       if (!authorized) {
-        next(Error.unAuthorized('Permission denied'));
+        return next(Error.unAuthorized('Permission denied'));
       }
 
       next();
