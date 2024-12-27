@@ -1,4 +1,4 @@
-const { StatusCodes, ReasonPhrases } = require('http-status-codes');
+const { StatusCodes } = require('http-status-codes');
 const CustomError = require('../utils/customError');
 
 module.exports = (err, req, res, _next) => {
@@ -25,9 +25,7 @@ module.exports = (err, req, res, _next) => {
   }
 
   if (err.name && err.name === 'JsonWebTokenError') {
-    return res
-      .status(StatusCodes.UNAUTHORIZED)
-      .json({ message: ReasonPhrases.UNAUTHORIZED });
+    return res.status(StatusCodes.UNAUTHORIZED).json({ message: err.message });
   }
 
   if (err.code && err.code === 'ENOENT') {

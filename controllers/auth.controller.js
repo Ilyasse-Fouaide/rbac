@@ -5,7 +5,7 @@ const { StatusCodes } = require('http-status-codes');
 const { Role } = require('../models');
 const { DEFAUL_ROLE } = require('../constants/roles');
 const { Token } = require('../models');
-const { registerJwtTokens } = require('../utils/jwt.utils');
+const { registerJwtTokens } = require('../jwt');
 const saveAvatarsToFile = require('../utils/saveAvatarsToFile.utils');
 const config = require('../config');
 
@@ -69,9 +69,9 @@ exports.login = catchAsyncErrors('sign-in user', async (req, res, next) => {
     return next(Error.badRequest('Invalid Credentials'));
   }
 
-  await registerJwtTokens(user, req, res, next);
+  const tokens = await registerJwtTokens(user, req, res, next);
 
-  res.status(StatusCodes.OK).json({});
+  res.status(StatusCodes.OK).json(tokens);
 });
 
 exports.logout = async (req, res) => {
