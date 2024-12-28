@@ -9,4 +9,6 @@ router.route('/login').post(auth.login);
 
 router.route('/logout').post(authentication, auth.logout);
 
+router.route('/token').post(auth.token);
+
 module.exports = router;
