@@ -5,7 +5,7 @@ const { StatusCodes } = require('http-status-codes');
 const { Role } = require('../models');
 const { DEFAUL_ROLE } = require('../constants/roles');
 const { Token } = require('../models');
-const { registerJwtTokens } = require('../jwt');
+const { registerJwtTokens, JWT } = require('../jwt');
 const saveAvatarsToFile = require('../utils/saveAvatarsToFile.utils');
 const config = require('../config');
 
@@ -74,20 +74,44 @@ exports.login = catchAsyncErrors('sign-in user', async (req, res, next) => {
   res.status(StatusCodes.OK).json(tokens);
 });
 
-exports.logout = async (req, res) => {
+exports.token = catchAsyncErrors('refreshing token', async (req, res, next) => {
+  const { refreshToken } = req.cookies;
+
+  if (!refreshToken) return next(Error.unAuthorized());
+
+  // decode the refreshToken to get userId from payload
+  const decoded = JWT.verifyJwtToken(
+    refreshToken,
+    config.JWT_REFRESHTOKEN_SECRET_KEY,
+  );
+
+  // find the user
+  const user = await User.findById(decoded.userId);
+  if (!user) return next(Error.notFound('User not found'));
+
+  const userToken = await Token.findOne({ user: user._id, refreshToken });
+
+  if (!userToken || !userToken.isValid) return next(Error.unAuthorized());
+
+  // generate new accessToken
+  const jwt = new JWT();
+  const newAccessToken = jwt.generateAccessToken(user);
+
+  res.status(StatusCodes.OK).json({ accessToken: newAccessToken });
+});
+
+exports.logout = async (req, res, next) => {
   // delete the token
-  await Token.findOneAndDelete({
+  const tokenUser = await Token.findOneAndDelete({
     user: req.user.userId,
   });
 
-  // clear both tokens cookie
+  if (!tokenUser) return next(Error.notFound('Token user not found'));
+
+  // clear refreshToken cookie
   res
     .status(StatusCodes.OK)
-    .cookie('refresh_token', '', {
-      httpOnly: true,
-      expires: new Date(Date.now()), // expires now
-    })
-    .cookie('access_token', '', {
+    .cookie('refreshToken', '', {
       httpOnly: true,
       expires: new Date(Date.now()), // expires now
     })

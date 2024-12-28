@@ -1,5 +1,6 @@
 const { StatusCodes } = require('http-status-codes');
 const CustomError = require('../utils/customError');
+const { JsonWebTokenError, TokenExpiredError } = require('jsonwebtoken');
 
 module.exports = (err, req, res, _next) => {
   if (err instanceof CustomError) {
@@ -24,8 +25,10 @@ module.exports = (err, req, res, _next) => {
       .json({ message: `${Object.keys(err.keyValue)} is already used` });
   }
 
-  if (err.name && err.name === 'JsonWebTokenError') {
-    return res.status(StatusCodes.UNAUTHORIZED).json({ message: err.message });
+  if (err instanceof JsonWebTokenError || err instanceof TokenExpiredError) {
+    return res
+      .status(StatusCodes.UNAUTHORIZED)
+      .json({ message: 'Token Expired or Invalid' });
   }
 
   if (err.code && err.code === 'ENOENT') {

@@ -13,14 +13,17 @@ const authenticated = async (req, res, next) => {
   }
 
   try {
+    // decode accessToken to get user data
     const decoded = JWT.verifyJwtToken(
       token,
       config.JWT_ACCESSTOKEN_SECRET_KEY,
     );
 
+    // find token user in db
     const tokenUser = await Token.findOne({ user: decoded.userId });
 
-    if (!tokenUser.isValid) {
+    // unAuthorized access for logged out or banned users
+    if (!tokenUser || !tokenUser.isValid) {
       return next(Error.unAuthorized());
     }
 

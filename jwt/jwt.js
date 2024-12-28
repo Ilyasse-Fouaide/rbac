@@ -6,9 +6,9 @@ class JWT {
     this.ACCESS_TOKEN_SECRET = config.JWT_ACCESSTOKEN_SECRET_KEY;
     this.REFRESH_TOKEN_SECRET = config.JWT_REFRESHTOKEN_SECRET_KEY;
     this.accessTokenExpires = config.JWT_ACCESSTOKEN_LIFETIME.toString();
-    this.accessTokenExpiresMs = 1000 * 60 * 15;
+    this.accessTokenExpiresMs = 1000 * 60 * 15; // 15min
     this.refreshTokenExpires = config.JWT_REFRESHTOKEN_LIFETIME.toString();
-    this.refreshTokenExpiresMs = 1000 * 60 * 60 * 24 * 15;
+    this.refreshTokenExpiresMs = 1000 * 60 * 60 * 24 * 7; // 7day
   }
 
   accessTokenPayload(user) {
