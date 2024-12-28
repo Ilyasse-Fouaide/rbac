@@ -10,12 +10,8 @@ router.route('/').get(
   }),
 );
 
-router.route('/callback').get(
-  passport.authenticate('google', {
-    failureRedirect: '/login',
-    session: false,
-  }),
-  auth.google,
-);
+router
+  .route('/callback')
+  .get(passport.authenticate('google', { session: false }), auth.google);
 
 module.exports = router;
